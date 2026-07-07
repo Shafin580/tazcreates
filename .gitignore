@@ -34,3 +34,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# graphify (knowledge graph — regenerated locally, contains absolute paths)
+/graphify-out/
+.graphify/
+*.graphml
+graph.svg
+cypher.txt

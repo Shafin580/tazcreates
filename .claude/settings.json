@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc --noEmit*)",
+      "Bash(pnpm tsc*)",
+      "Bash(pnpm lint*)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR/.claude/scripts/graphify-freshness.sh\"",
+            "timeout": 30,
+            "statusMessage": "Checking graphify freshness..."
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "f=$(jq -r '.tool_input.file_path // empty'); case \"$f\" in *pnpm-lock.yaml|*package-lock.json|*yarn.lock|*bun.lockb|*.env|*.env.*) echo 'Blocked: do not edit lockfiles or .env files' >&2; exit 2 ;; esac"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cmd=$(jq -r '.tool_input.command // empty'); case \"$cmd\" in *'git pull'*|*'git merge'*|*'git checkout'*|*'git switch'*) exec \"$CLAUDE_PROJECT_DIR/.claude/scripts/graphify-freshness.sh\" ;; esac",
+            "timeout": 30
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "f=$(jq -r '.tool_input.file_path // empty'); case \"$f\" in *.ts|*.tsx) [ -x \"$CLAUDE_PROJECT_DIR/node_modules/.bin/prettier\" ] && \"$CLAUDE_PROJECT_DIR/node_modules/.bin/prettier\" --write \"$f\" >/dev/null 2>&1 || true ;; esac"
+          }
+        ]
+      }
+    ]
+  }
+}

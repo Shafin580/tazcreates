@@ -1,0 +1,103 @@
+{
+  "Common": {
+    "a11y": { "pagination": "Pagination" },
+    "fieldDefaults": { "actionTooltip": "Action" },
+    "select": {
+      "clearSelection": "Clear selection",
+      "noOptions": "No options found.",
+      "placeholder": "Select...",
+      "searchPlaceholder": "Search..."
+    },
+    "states": {
+      "loadingContent": "Loading content",
+      "loadingDetails": "Loading details",
+      "loadingForm": "Loading form",
+      "loadingPage": "Loading page",
+      "loadingTable": "Loading table"
+    }
+  },
+  "Tables": {
+    "filters": {
+      "clearAll": "Clear all",
+      "matchTotal": "{count} records match these filters.",
+      "noFilters": "No filters available.",
+      "noSectionFound": "No {section} found.",
+      "searchSection": "Search {section}...",
+      "selectAll": "Select all",
+      "sheetDescription": "Select filters to narrow down the list.",
+      "statusActive": "Active",
+      "statusInactive": "Inactive",
+      "title": "Filters"
+    },
+    "pagination": {
+      "filteredFrom": "(filtered from {total})",
+      "first": "First page",
+      "jumpTo": "Jump to page…",
+      "last": "Last page",
+      "next": "Next",
+      "noPage": "No page",
+      "noRows": "No {label}s",
+      "page": "Page",
+      "pageAriaLabel": "Page {current} of {total}. Click to jump to page.",
+      "prev": "Previous",
+      "rowsPerPage": "Rows per page",
+      "selected": "{count} selected",
+      "showing": "Showing {from}–{to} of {total} {label}"
+    }
+  },
+  "Toasts": {
+    "error": {
+      "create": "Failed to create {entity}",
+      "delete": "Failed to delete {entity}",
+      "generic": "Action failed",
+      "network": "Network error. Check your connection.",
+      "update": "Failed to update {entity}"
+    },
+    "loading": { "deleting": "Deleting…", "saving": "Saving…", "uploading": "Uploading…" },
+    "success": {
+      "copy": "Copied to clipboard",
+      "create": "{entity} created",
+      "delete": "{entity} deleted",
+      "save": "Saved",
+      "send": "Sent",
+      "update": "{entity} updated",
+      "upload": "Uploaded"
+    }
+  },
+  "Errors": {
+    "actionFailed": { "title": "Action Failed", "description": "Please try again." },
+    "byCode": {
+      "400": "Bad request. Please check your input.",
+      "401": "Unauthorized. Please log in again.",
+      "403": "You don't have permission to perform this action.",
+      "404": "The requested resource was not found.",
+      "408": "Request timed out. Please try again.",
+      "422": "Validation failed. Please review your input.",
+      "429": "Too many requests. Please wait and try again.",
+      "500": "Server error. Please try again later.",
+      "502": "Bad gateway. Please try again shortly.",
+      "503": "Service unavailable. Please try again later.",
+      "504": "Gateway timeout. Please try again."
+    },
+    "fetch": { "title": "Failed to Load", "description": "Please try again later." },
+    "fileTooLarge": { "title": "File Too Large", "description": "Please choose a smaller file." },
+    "network": { "title": "Network Error", "description": "Check your connection and try again." },
+    "notFound": { "title": "Not Found", "description": "The requested resource could not be found." },
+    "server": { "title": "Server Error", "description": "Something went wrong! There was a server error." },
+    "tryAgain": { "title": "Error", "description": "An error occurred. Please try again." },
+    "unauthorized": { "title": "Unauthorized", "description": "You don't have permission to perform this action." },
+    "unexpected": { "title": "Error", "description": "An unexpected error occurred." },
+    "validation": { "title": "Validation Error", "description": "Please fix the errors before submitting." }
+  },
+  "Validation": {
+    "date": { "future": "Date must be in the future", "past": "Date must be in the past", "required": "Date is required" },
+    "email": "Enter a valid email address",
+    "maxLength": "Must be at most {max} characters",
+    "minLength": "Must be at least {min} characters",
+    "number": { "integer": "Must be a whole number", "max": "Must be at most {max}", "min": "Must be at least {min}" },
+    "passwordMismatch": "Passwords do not match",
+    "phone": "Enter a valid phone number",
+    "required": "This field is required",
+    "url": "Enter a valid URL"
+  }
+}

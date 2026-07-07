@@ -1,0 +1,19 @@
+# Escape hatch: BYPASS_CHECKS=true git push
+if [ "$BYPASS_CHECKS" = "true" ]; then
+  echo "Bypassing pre-push checks..."
+  exit 0
+fi
+
+# Lint first (fast — fails before the slower typecheck).
+echo "Running lint..."
+pnpm lint || { echo "Lint failed. Aborting push."; exit 1; }
+
+# Type safety gate (project's verification bar per CLAUDE.md).
+echo "Running tsc --noEmit..."
+pnpm tsc --noEmit || { echo "Type check failed. Aborting push."; exit 1; }
+
+# i18n locale parity (en is source; every key must exist in bn).
+echo "Running i18n:check..."
+pnpm i18n:check --ci || { echo "i18n parity failed. Aborting push."; exit 1; }
+
+echo "All checks passed. Proceeding with push."

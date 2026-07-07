@@ -32,7 +32,7 @@ Re-read this file, then re-read the skill for the in-progress task (frontend / g
 ## Knowledge graph (graphify)
 
 If `graphify-out/` exists: query the graph BEFORE Grep/Glob/Read. If `graphify-out/.needs_update` exists, run `/graphify ./ --update` first.
-Commands: `query "<q>"` (BFS), `query "<q>" --dfs`, `path "<A>" "<B>"`, `explain "<node>"`. Read `graphify-out/GRAPH_REPORT.md` for architecture questions.
+Commands: `query "<q>"` (BFS), `query "<q>" --dfs`, `path "<A>" "<B>"`, `explain "<node>"`, `affected "<node>"` (reverse traversal — impact/blast radius before a change). Read `graphify-out/GRAPH_REPORT.md` for architecture questions.
 Cite `source_file:source_location` from graph results. Trust EXTRACTED edges; verify INFERRED ones against source before relying on them.
 
 ## Skills

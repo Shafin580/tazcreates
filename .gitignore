@@ -28,6 +28,9 @@ yarn-error.log*
 .env*.local
 .env
 
+# MCP config — contains the context7 API key; keep out of git (adopters add their own)
+.mcp.json
+
 # vercel
 .vercel
 

@@ -1,6 +1,16 @@
 {
   "Common": {
     "a11y": { "pagination": "Pagination" },
+    "datePicker": {
+      "date": "Date",
+      "dateFormat": "DD/MM/YYYY",
+      "endDate": "End date",
+      "invalidDate": "Enter a valid date.",
+      "invalidRange": "End date must be on or after the start date.",
+      "selectDate": "Select a date",
+      "selectRange": "Select a date range",
+      "startDate": "Start date"
+    },
     "fieldDefaults": { "actionTooltip": "Action" },
     "select": {
       "clearSelection": "Clear selection",
@@ -14,6 +24,153 @@
       "loadingForm": "Loading form",
       "loadingPage": "Loading page",
       "loadingTable": "Loading table"
+    }
+  },
+  "ComponentDemo": {
+    "page": {
+      "catalogNavigation": "Component catalog",
+      "description": "A living reference for the project’s UI primitives, composed components, global states, and theme controls.",
+      "eyebrow": "Living component reference",
+      "noResults": "No components match your search.",
+      "searchLabel": "Search components",
+      "searchPlaceholder": "Search by component name or source path",
+      "showing": "Showing {visible} of {total} components",
+      "source": "Source",
+      "title": "Component demo"
+    },
+    "categories": {
+      "custom": "Project components",
+      "dataDisplay": "Data display and feedback",
+      "forms": "Forms and controls",
+      "foundations": "Foundations",
+      "global": "Global states and utilities",
+      "layoutFeedback": "Layout and application feedback",
+      "navigation": "Navigation and disclosure",
+      "overlays": "Overlays and menus",
+      "theme": "Theme controls and providers"
+    },
+    "samples": {
+      "actions": {
+        "cancel": "Cancel",
+        "clear": "Clear",
+        "close": "Close",
+        "confirm": "Confirm",
+        "contact": "Contact support",
+        "continue": "Continue",
+        "copy": "Copy",
+        "delete": "Delete",
+        "edit": "Edit",
+        "filter": "Filter",
+        "learnMore": "Learn more",
+        "next": "Next",
+        "open": "Open",
+        "previous": "Previous",
+        "retry": "Retry",
+        "save": "Save changes",
+        "search": "Search",
+        "select": "Select",
+        "settings": "Settings",
+        "share": "Share"
+      },
+      "content": {
+        "alertDescription": "Review the details before continuing.",
+        "alertTitle": "Heads up",
+        "description": "Use this example as a practical implementation reference.",
+        "dialogDescription": "This controlled overlay demonstrates focus and dismissal behavior.",
+        "dialogTitle": "Example dialog",
+        "drawerDescription": "Drawer content can contain forms, details, or actions.",
+        "emptyDescription": "Try adjusting the search or adding a new record.",
+        "emptyTitle": "No records found",
+        "errorDescription": "The request could not be completed. Please try again.",
+        "errorTitle": "Unable to load data",
+        "hoverDescription": "Additional context appears without leaving the current task.",
+        "loading": "Loading example content",
+        "menuDescription": "Choose an action from the menu.",
+        "popoverDescription": "Compact supporting content belongs in a popover.",
+        "sectionDescription": "Representative states and interactions from the shipped component API.",
+        "sheetDescription": "Sheets work well for supporting tasks and narrow layouts.",
+        "shortDescription": "A concise supporting description.",
+        "themeLimitation": "These controls expose provider state and body attributes. Additional preset CSS tokens can be added by an adopting application.",
+        "title": "Example content",
+        "tooltip": "Helpful context",
+        "workInProgress": "Work in progress, please check back later."
+      },
+      "labels": {
+        "account": "Account",
+        "amount": "Amount",
+        "country": "Country",
+        "date": "Date",
+        "email": "Email address",
+        "language": "Language",
+        "message": "Message",
+        "name": "Name",
+        "notifications": "Notifications",
+        "oneTimeCode": "One-time code",
+        "password": "Password",
+        "phone": "Phone number",
+        "progress": "Progress",
+        "role": "Role",
+        "search": "Search records",
+        "status": "Status",
+        "terms": "Accept terms",
+        "volume": "Volume"
+      },
+      "options": {
+        "active": "Active",
+        "admin": "Administrator",
+        "design": "Design",
+        "editor": "Editor",
+        "engineering": "Engineering",
+        "inactive": "Inactive",
+        "marketing": "Marketing",
+        "optionOne": "First option",
+        "optionThree": "Third option",
+        "optionTwo": "Second option",
+        "viewer": "Viewer"
+      },
+      "states": {
+        "checked": "Checked",
+        "default": "Default",
+        "destructive": "Destructive",
+        "disabled": "Disabled",
+        "ghost": "Ghost",
+        "large": "Large",
+        "loading": "Loading",
+        "outline": "Outline",
+        "secondary": "Secondary",
+        "small": "Small",
+        "success": "Success",
+        "warning": "Warning"
+      }
+    }
+  },
+  "ThemeCustomizer": {
+    "actions": {
+      "open": "Open theme customizer",
+      "reset": "Reset to default"
+    },
+    "labels": {
+      "chartPreset": "Chart preset",
+      "colorMode": "Color mode",
+      "contentLayout": "Content layout",
+      "font": "Font",
+      "preset": "Theme preset",
+      "radius": "Radius",
+      "scale": "Scale",
+      "sidebarMode": "Sidebar mode"
+    },
+    "options": {
+      "centered": "Centered",
+      "dark": "Dark",
+      "default": "Default",
+      "full": "Full",
+      "icon": "Icon",
+      "light": "Light",
+      "none": "None"
+    },
+    "placeholders": {
+      "font": "Select font",
+      "theme": "Select a theme"
     }
   },
   "Tables": {

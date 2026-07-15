@@ -1,6 +1,16 @@
 {
   "Common": {
     "a11y": { "pagination": "পেজিনেশন" },
+    "datePicker": {
+      "date": "__TODO__: Date",
+      "dateFormat": "__TODO__: DD/MM/YYYY",
+      "endDate": "__TODO__: End date",
+      "invalidDate": "__TODO__: Enter a valid date.",
+      "invalidRange": "__TODO__: End date must be on or after the start date.",
+      "selectDate": "__TODO__: Select a date",
+      "selectRange": "__TODO__: Select a date range",
+      "startDate": "__TODO__: Start date"
+    },
     "fieldDefaults": { "actionTooltip": "ক্রিয়া" },
     "select": {
       "clearSelection": "নির্বাচন মুছে ফেলুন",
@@ -14,6 +24,153 @@
       "loadingForm": "ফর্ম লোড হচ্ছে",
       "loadingPage": "পেজ লোড হচ্ছে",
       "loadingTable": "টেবিল লোড হচ্ছে"
+    }
+  },
+  "ComponentDemo": {
+    "page": {
+      "catalogNavigation": "__TODO__: Component catalog",
+      "description": "__TODO__: A living reference for the project’s UI primitives, composed components, global states, and theme controls.",
+      "eyebrow": "__TODO__: Living component reference",
+      "noResults": "__TODO__: No components match your search.",
+      "searchLabel": "__TODO__: Search components",
+      "searchPlaceholder": "__TODO__: Search by component name or source path",
+      "showing": "__TODO__: Showing {visible} of {total} components",
+      "source": "__TODO__: Source",
+      "title": "__TODO__: Component demo"
+    },
+    "categories": {
+      "custom": "__TODO__: Project components",
+      "dataDisplay": "__TODO__: Data display and feedback",
+      "forms": "__TODO__: Forms and controls",
+      "foundations": "__TODO__: Foundations",
+      "global": "__TODO__: Global states and utilities",
+      "layoutFeedback": "__TODO__: Layout and application feedback",
+      "navigation": "__TODO__: Navigation and disclosure",
+      "overlays": "__TODO__: Overlays and menus",
+      "theme": "__TODO__: Theme controls and providers"
+    },
+    "samples": {
+      "actions": {
+        "cancel": "__TODO__: Cancel",
+        "clear": "__TODO__: Clear",
+        "close": "__TODO__: Close",
+        "confirm": "__TODO__: Confirm",
+        "contact": "__TODO__: Contact support",
+        "continue": "__TODO__: Continue",
+        "copy": "__TODO__: Copy",
+        "delete": "__TODO__: Delete",
+        "edit": "__TODO__: Edit",
+        "filter": "__TODO__: Filter",
+        "learnMore": "__TODO__: Learn more",
+        "next": "__TODO__: Next",
+        "open": "__TODO__: Open",
+        "previous": "__TODO__: Previous",
+        "retry": "__TODO__: Retry",
+        "save": "__TODO__: Save changes",
+        "search": "__TODO__: Search",
+        "select": "__TODO__: Select",
+        "settings": "__TODO__: Settings",
+        "share": "__TODO__: Share"
+      },
+      "content": {
+        "alertDescription": "__TODO__: Review the details before continuing.",
+        "alertTitle": "__TODO__: Heads up",
+        "description": "__TODO__: Use this example as a practical implementation reference.",
+        "dialogDescription": "__TODO__: This controlled overlay demonstrates focus and dismissal behavior.",
+        "dialogTitle": "__TODO__: Example dialog",
+        "drawerDescription": "__TODO__: Drawer content can contain forms, details, or actions.",
+        "emptyDescription": "__TODO__: Try adjusting the search or adding a new record.",
+        "emptyTitle": "__TODO__: No records found",
+        "errorDescription": "__TODO__: The request could not be completed. Please try again.",
+        "errorTitle": "__TODO__: Unable to load data",
+        "hoverDescription": "__TODO__: Additional context appears without leaving the current task.",
+        "loading": "__TODO__: Loading example content",
+        "menuDescription": "__TODO__: Choose an action from the menu.",
+        "popoverDescription": "__TODO__: Compact supporting content belongs in a popover.",
+        "sectionDescription": "__TODO__: Representative states and interactions from the shipped component API.",
+        "sheetDescription": "__TODO__: Sheets work well for supporting tasks and narrow layouts.",
+        "shortDescription": "__TODO__: A concise supporting description.",
+        "themeLimitation": "__TODO__: These controls expose provider state and body attributes. Additional preset CSS tokens can be added by an adopting application.",
+        "title": "__TODO__: Example content",
+        "tooltip": "__TODO__: Helpful context",
+        "workInProgress": "__TODO__: Work in progress, please check back later."
+      },
+      "labels": {
+        "account": "__TODO__: Account",
+        "amount": "__TODO__: Amount",
+        "country": "__TODO__: Country",
+        "date": "__TODO__: Date",
+        "email": "__TODO__: Email address",
+        "language": "__TODO__: Language",
+        "message": "__TODO__: Message",
+        "name": "__TODO__: Name",
+        "notifications": "__TODO__: Notifications",
+        "oneTimeCode": "__TODO__: One-time code",
+        "password": "__TODO__: Password",
+        "phone": "__TODO__: Phone number",
+        "progress": "__TODO__: Progress",
+        "role": "__TODO__: Role",
+        "search": "__TODO__: Search records",
+        "status": "__TODO__: Status",
+        "terms": "__TODO__: Accept terms",
+        "volume": "__TODO__: Volume"
+      },
+      "options": {
+        "active": "__TODO__: Active",
+        "admin": "__TODO__: Administrator",
+        "design": "__TODO__: Design",
+        "editor": "__TODO__: Editor",
+        "engineering": "__TODO__: Engineering",
+        "inactive": "__TODO__: Inactive",
+        "marketing": "__TODO__: Marketing",
+        "optionOne": "__TODO__: First option",
+        "optionThree": "__TODO__: Third option",
+        "optionTwo": "__TODO__: Second option",
+        "viewer": "__TODO__: Viewer"
+      },
+      "states": {
+        "checked": "__TODO__: Checked",
+        "default": "__TODO__: Default",
+        "destructive": "__TODO__: Destructive",
+        "disabled": "__TODO__: Disabled",
+        "ghost": "__TODO__: Ghost",
+        "large": "__TODO__: Large",
+        "loading": "__TODO__: Loading",
+        "outline": "__TODO__: Outline",
+        "secondary": "__TODO__: Secondary",
+        "small": "__TODO__: Small",
+        "success": "__TODO__: Success",
+        "warning": "__TODO__: Warning"
+      }
+    }
+  },
+  "ThemeCustomizer": {
+    "actions": {
+      "open": "__TODO__: Open theme customizer",
+      "reset": "__TODO__: Reset to default"
+    },
+    "labels": {
+      "chartPreset": "__TODO__: Chart preset",
+      "colorMode": "__TODO__: Color mode",
+      "contentLayout": "__TODO__: Content layout",
+      "font": "__TODO__: Font",
+      "preset": "__TODO__: Theme preset",
+      "radius": "__TODO__: Radius",
+      "scale": "__TODO__: Scale",
+      "sidebarMode": "__TODO__: Sidebar mode"
+    },
+    "options": {
+      "centered": "__TODO__: Centered",
+      "dark": "__TODO__: Dark",
+      "default": "__TODO__: Default",
+      "full": "__TODO__: Full",
+      "icon": "__TODO__: Icon",
+      "light": "__TODO__: Light",
+      "none": "__TODO__: None"
+    },
+    "placeholders": {
+      "font": "__TODO__: Select font",
+      "theme": "__TODO__: Select a theme"
     }
   },
   "Tables": {

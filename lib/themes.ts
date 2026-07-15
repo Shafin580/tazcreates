@@ -1,3 +1,20 @@
+export type ThemeType = {
+  preset:
+    | "default"
+    | "desert-heat"
+    | "lake-view"
+    | "sunset-glow"
+    | "forest-whisper"
+    | "ocean-breeze"
+    | "lavender-dream"
+    | "retro";
+  radius: "default" | "none" | "sm" | "md" | "lg" | "xl";
+  scale: "none" | "sm" | "lg";
+  font: "default" | "inter" | "roboto" | "montserrat" | "poppins" | "overpass-mono" | "pt-sans";
+  chartPreset: "default" | "cyan" | "amber" | "green" | "indigo" | "fuchsia";
+  contentLayout: "full" | "centered";
+};
+
 export const DEFAULT_THEME = {
   preset: "default",
   radius: "default",
@@ -5,9 +22,7 @@ export const DEFAULT_THEME = {
   font: "default",
   chartPreset: "default",
   contentLayout: "full"
-} as const;
-
-export type ThemeType = typeof DEFAULT_THEME;
+} as const satisfies ThemeType;
 
 export const THEMES = [
   {

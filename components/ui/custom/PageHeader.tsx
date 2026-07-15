@@ -19,6 +19,8 @@ import type { BreadcrumbEntry } from "@/utils/breadcrumb-utils";
 export type PageHeaderProps = {
   /** Page title. Falls back to auto-detected title from sidebar route store. */
   title?: string;
+  /** Semantic heading level for the title. Default: 1. */
+  headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
   /** Secondary description below the title. */
   subtitle?: string;
   /** Whether to render the breadcrumb trail. Default: true. */
@@ -33,6 +35,8 @@ export type PageHeaderProps = {
    * - ReactNode: renders custom tooltip content inside the Info button.
    */
   docLink?: string | React.ReactNode;
+  /** Label for string documentation links. */
+  learnMoreText?: string;
   /** Scroll Y threshold for showing a bottom border on the header. */
   scrollY?: number;
   /** Action buttons or controls rendered on the right side of the header. */
@@ -41,15 +45,18 @@ export type PageHeaderProps = {
 
 export function PageHeader({
   title,
+  headingLevel = 1,
   subtitle,
   showBreadcrumb = true,
   breadcrumbs,
   isLoading = false,
   docLink,
+  learnMoreText = "Learn more",
   scrollY,
   children
 }: PageHeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
+  const Heading = `h${headingLevel}` as const;
 
   useEffect(() => {
     if (scrollY != null) {
@@ -66,13 +73,13 @@ export function PageHeader({
       return (
         <div className="text-xs">
           <Link href={docLink} target="_blank" className="hover:text-secondary">
-            Learn more
+            {learnMoreText}
           </Link>
         </div>
       );
     }
     return docLink;
-  }, [docLink]);
+  }, [docLink, learnMoreText]);
 
   return (
     <>
@@ -124,7 +131,7 @@ export function PageHeader({
                 {isLoading && !title ? (
                   <div className="bg-muted h-8 w-48 animate-pulse rounded" />
                 ) : title ? (
-                  <h1 className="text-2xl font-bold">{title}</h1>
+                  <Heading className="text-2xl font-bold">{title}</Heading>
                 ) : null}
                 {subtitle && <p className="text-muted-foreground">{subtitle}</p>}
               </div>

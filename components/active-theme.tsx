@@ -1,7 +1,16 @@
 "use client";
 
-import { ReactNode, createContext, useContext, useEffect, useState, useRef } from "react";
+import { ReactNode, createContext, useContext, useEffect, useRef, useState } from "react";
 import { DEFAULT_THEME, ThemeType } from "@/lib/themes";
+
+const THEME_BODY_ATTRIBUTES = [
+  "data-theme-radius",
+  "data-theme-preset",
+  "data-theme-content-layout",
+  "data-theme-scale",
+  "data-theme-chart-preset",
+  "data-theme-font"
+] as const;
 
 function setThemeCookie(key: string, value: string | null) {
   if (typeof window === "undefined") return;
@@ -22,65 +31,97 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ActiveThemeProvider({
   children,
-  initialTheme
+  initialTheme,
+  persist = true,
+  restoreOnUnmount = false
 }: {
   children: ReactNode;
   initialTheme?: ThemeType;
+  persist?: boolean;
+  restoreOnUnmount?: boolean;
 }) {
-  const previousTheme = useRef<ThemeType>(initialTheme ? initialTheme : DEFAULT_THEME);
+  const previousBodyAttributes = useRef<Record<string, string | null> | null>(null);
   const [theme, setTheme] = useState<ThemeType>(() =>
     initialTheme ? initialTheme : DEFAULT_THEME
   );
 
   useEffect(() => {
-    const body = document.body;
+    if (!restoreOnUnmount) return;
 
-    setThemeCookie("theme_radius", theme.radius);
-    body.setAttribute("data-theme-radius", theme.radius);
+    const body = document.body;
+    previousBodyAttributes.current = Object.fromEntries(
+      THEME_BODY_ATTRIBUTES.map((attribute) => [attribute, body.getAttribute(attribute)])
+    );
+
+    return () => {
+      const previous = previousBodyAttributes.current;
+      if (!previous) return;
+
+      for (const attribute of THEME_BODY_ATTRIBUTES) {
+        const value = previous[attribute];
+        if (value === null) body.removeAttribute(attribute);
+        else body.setAttribute(attribute, value);
+      }
+    };
+  }, [restoreOnUnmount]);
+
+  useEffect(() => {
+    const body = document.body;
+    const persistCookie = (key: string, value: string | null) => {
+      if (persist) setThemeCookie(key, value);
+    };
 
     if (theme.radius != "default") {
-      setThemeCookie("theme_preset", theme.radius);
+      persistCookie("theme_radius", theme.radius);
       body.setAttribute("data-theme-radius", theme.radius);
     } else {
-      setThemeCookie("theme_preset", null);
+      persistCookie("theme_radius", null);
       body.removeAttribute("data-theme-radius");
     }
 
     if (theme.preset != "default") {
-      setThemeCookie("theme_preset", theme.preset);
+      persistCookie("theme_preset", theme.preset);
       body.setAttribute("data-theme-preset", theme.preset);
     } else {
-      setThemeCookie("theme_preset", null);
+      persistCookie("theme_preset", null);
       body.removeAttribute("data-theme-preset");
     }
 
-    setThemeCookie("theme_content_layout", theme.contentLayout);
+    persistCookie("theme_content_layout", theme.contentLayout);
     body.setAttribute("data-theme-content-layout", theme.contentLayout);
 
     if (theme.scale != "none") {
-      setThemeCookie("theme_scale", theme.scale);
+      persistCookie("theme_scale", theme.scale);
       body.setAttribute("data-theme-scale", theme.scale);
     } else {
-      setThemeCookie("theme_scale", null);
+      persistCookie("theme_scale", null);
       body.removeAttribute("data-theme-scale");
     }
 
     if (theme.chartPreset != "default") {
-      setThemeCookie("theme_chart_preset", theme.chartPreset);
+      persistCookie("theme_chart_preset", theme.chartPreset);
       body.setAttribute("data-theme-chart-preset", theme.chartPreset);
     } else {
-      setThemeCookie("theme_chart_preset", null);
+      persistCookie("theme_chart_preset", null);
       body.removeAttribute("data-theme-chart-preset");
     }
 
     if (theme.font != "default") {
-      setThemeCookie("theme_font", theme.font);
+      persistCookie("theme_font", theme.font);
       body.setAttribute("data-theme-font", theme.font);
     } else {
-      setThemeCookie("theme_font", null);
+      persistCookie("theme_font", null);
       body.removeAttribute("data-theme-font");
     }
-  }, [theme.preset, theme.radius, theme.scale, theme.chartPreset, theme.contentLayout, theme.font]);
+  }, [
+    persist,
+    theme.preset,
+    theme.radius,
+    theme.scale,
+    theme.chartPreset,
+    theme.contentLayout,
+    theme.font
+  ]);
 
   return <ThemeContext.Provider value={{ theme, setTheme }}>{children}</ThemeContext.Provider>;
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
 import { useRouter } from "next/navigation";
 import {
   AlertDialog,
@@ -10,7 +10,7 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
+  AlertDialogTitle
 } from "../ui/alert-dialog";
 
 /**
@@ -20,7 +20,22 @@ import {
  */
 export function useUnsavedChanges(
   hasUnsavedChanges: boolean,
-  message: string = "You have unsaved changes. Are you sure you want to leave?"
+  message: string = "You have unsaved changes. Are you sure you want to leave?",
+  {
+    scopeRef,
+    guardBeforeUnload = true,
+    title = "Unsaved Changes",
+    cancelText = "Cancel",
+    confirmText = "Leave Page",
+    qaPrefix = "global.unsaved-changes"
+  }: {
+    scopeRef?: RefObject<HTMLElement | null>;
+    guardBeforeUnload?: boolean;
+    title?: string;
+    cancelText?: string;
+    confirmText?: string;
+    qaPrefix?: string;
+  } = {}
 ) {
   const router = useRouter();
   const isNavigatingRef = useRef(false);
@@ -36,18 +51,23 @@ export function useUnsavedChanges(
       }
     };
 
-    if (hasUnsavedChanges) {
+    if (hasUnsavedChanges && guardBeforeUnload) {
       window.addEventListener("beforeunload", handleBeforeUnload);
     }
 
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [hasUnsavedChanges, message]);
+  }, [guardBeforeUnload, hasUnsavedChanges, message]);
+
+  useEffect(() => {
+    if (!hasUnsavedChanges) isNavigatingRef.current = false;
+  }, [hasUnsavedChanges]);
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
+      if (scopeRef?.current && !scopeRef.current.contains(target)) return;
       const anchor = target.closest("a");
 
       if (anchor && hasUnsavedChanges && !isNavigatingRef.current) {
@@ -69,7 +89,7 @@ export function useUnsavedChanges(
     return () => {
       document.removeEventListener("click", handleClick, true);
     };
-  }, [hasUnsavedChanges]);
+  }, [hasUnsavedChanges, scopeRef]);
 
   const handleConfirm = useCallback(() => {
     isNavigatingRef.current = true;
@@ -92,13 +112,18 @@ export function useUnsavedChanges(
     <AlertDialog open={showModal} onOpenChange={setShowModal}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Unsaved Changes</AlertDialogTitle>
+          <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>{message}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={handleCancel}>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleConfirm} className="bg-red-600 hover:bg-red-700 text-white border-0">
-            Leave Page
+          <AlertDialogCancel data-qa={`${qaPrefix}.cancel`} onClick={handleCancel}>
+            {cancelText}
+          </AlertDialogCancel>
+          <AlertDialogAction
+            data-qa={`${qaPrefix}.confirm`}
+            onClick={handleConfirm}
+            variant="destructive">
+            {confirmText}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

@@ -2,6 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "permissions": {
     "allow": [
+      "Bash(curl -s http://localhost:1234/*)",
       "Bash(npx tsc --noEmit*)",
       "Bash(pnpm tsc*)",
       "Bash(pnpm lint*)",

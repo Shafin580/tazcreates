@@ -18,6 +18,27 @@
 - Read the relevant skill (via the Skill tool) BEFORE writing or reviewing code it covers.
 - After any user correction, append the lesson to `.claude/tasks/lessons.md`.
 - Never mark work done without proof. Verification for this project: `pnpm tsc --noEmit` + `pnpm lint` on changed files.
+- Offload bounded, low-risk subtasks to the local model and **always review** the result — see *Delegating to the local model* below.
+
+## Delegating to the local model (Claude-usage efficiency)
+
+To conserve Claude usage, offload **bounded, mechanical, low-risk** subtasks to the local LM Studio model **`google/gemma-4-12b-qat`** (OpenAI-compatible, default `http://localhost:1234/v1`), then **always review** the result before using it. Claude stays the planner, reviewer, and integrator; the local model is a cheap first-draft generator whose output is untrusted until verified.
+
+**Delegate (good fit):** boilerplate/scaffolding from an explicit spec (a type/DTO from a described shape, a test skeleton, a component stub), repetitive mechanical edits (renames, docstrings/comments, format-only rewrites), first-draft `bn` i18n values, file/diff summaries, draft commit messages.
+
+**Never delegate (Claude does these directly):** architecture, the FE↔BE wire contract, DB schema/migrations, auth/permissions and other security-sensitive code, and anything needing whole-repo or cross-file reasoning.
+
+**How to call it (Bash):**
+
+```bash
+curl -s http://localhost:1234/v1/chat/completions \
+  -H 'Content-Type: application/json' \
+  -d '{"model":"google/gemma-4-12b-qat","messages":[{"role":"user","content":"<task>"}],"temperature":0.2}'
+```
+
+Read `.choices[0].message.content` from the JSON. The model id must match what LM Studio has loaded — confirm with `curl -s http://localhost:1234/v1/models`. If the server is unreachable, **do the task yourself** — never block on it.
+
+**Always review (non-negotiable):** treat the output as an untrusted draft — read it, run this project's verification (`pnpm tsc --noEmit && pnpm lint`), and fix any issue before accepting. Never commit or mark work done on unreviewed local-model output. The review itself is Claude's job — never delegated.
 
 ## After auto-compact
 

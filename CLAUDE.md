@@ -18,7 +18,7 @@
 - Read the relevant skill (via the Skill tool) BEFORE writing or reviewing code it covers.
 - After any user correction, append the lesson to `.claude/tasks/lessons.md`.
 - Never mark work done without proof. Verification for this project: `pnpm tsc --noEmit` + `pnpm lint` on changed files.
-- Before starting a bounded/mechanical subtask (stub, test skeleton, rename, docstring pass, summary, commit-message draft), read the `delegate-local` skill — it decides whether to offload to the local model. **Always review** the result; see *Delegating to the local model* below for the mechanics.
+- Before starting a bounded/mechanical subtask (stub, test skeleton, rename, docstring pass, summary, commit-message draft), read the `local-llm` skill — it decides whether to offload to the local model. **Always review** the result; see *Delegating to the local model* below for the mechanics.
 
 ## Delegating to the local model (Claude-usage efficiency)
 
@@ -67,7 +67,7 @@ Cite `source_file:source_location` from graph results. Trust EXTRACTED edges; ve
 | `knowledge` | Retrieving past learnings (`.planning/learnings/`) |
 | `learn` | Capturing implementation learnings after significant work |
 | `ui-auditor` | Auditing UI consistency, UX, and accessibility |
-| `delegate-local` | Before starting a bounded/mechanical subtask — decide if it should go to the local model first |
+| `local-llm` | Before starting a bounded/mechanical subtask — decide if it should go to the local model first |
 
 ## Cross-cutting rules
 

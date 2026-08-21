@@ -10,7 +10,7 @@ import {
   CommandEmpty,
   CommandGroup,
   CommandInput,
-  CommandItem,
+  CommandItem
 } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
@@ -33,6 +33,9 @@ interface CustomSelectProps {
   disabled?: boolean;
   showClear?: boolean;
   id?: string;
+  /** Merged onto the trigger button. Lets a caller meet a taller touch target
+   *  (`min-h-11`) without changing the default height for existing consumers. */
+  className?: string;
   "data-qa"?: string;
 }
 
@@ -45,7 +48,8 @@ export function CustomSelect({
   disabled = false,
   showClear = true,
   id,
-  "data-qa": dataQa
+  "data-qa": dataQa,
+  className
 }: CustomSelectProps) {
   const t = useTranslations("Common");
   const [open, setOpen] = React.useState(false);
@@ -80,10 +84,12 @@ export function CustomSelect({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            aria-label={selectedLabel ?? (placeholder ?? t("select.placeholder"))}
-            className={cn("w-full justify-between", value && showClear && "pr-16")}
+            aria-label={selectedLabel ?? placeholder ?? t("select.placeholder")}
+            className={cn("w-full justify-between", value && showClear && "pr-16", className)}
             disabled={disabled}>
-            <span className="truncate">{selectedLabel ?? (placeholder ?? t("select.placeholder"))}</span>
+            <span className="truncate">
+              {selectedLabel ?? placeholder ?? t("select.placeholder")}
+            </span>
             <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" aria-hidden="true" />
           </Button>
         </PopoverTrigger>
@@ -99,7 +105,10 @@ export function CustomSelect({
                   keywords={[option.label]}
                   onSelect={() => handleSelect(option.value)}>
                   <Check
-                    className={cn("mr-2 size-4", value === option.value ? "opacity-100" : "opacity-0")}
+                    className={cn(
+                      "mr-2 size-4",
+                      value === option.value ? "opacity-100" : "opacity-0"
+                    )}
                   />
                   {option.label}
                 </CommandItem>
@@ -114,7 +123,9 @@ export function CustomSelect({
           variant="ghost"
           size="sm"
           aria-label={t("select.clearSelection")}
-          className="absolute right-10 p-0"
+          // `size="sm"` with `p-0` collapses this to 18x28. WCAG 2.5.8 sets a 24x24
+          // minimum for pointer targets, so the hit area is set explicitly here.
+          className="absolute right-9 size-6 p-0"
           disabled={disabled}
           onClick={(e) => {
             e.stopPropagation();

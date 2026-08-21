@@ -1,0 +1,57 @@
+# Tazmeen Zabiyaan — Hand-Drawn Portrait Artist
+
+> Tazmeen Zabiyaan is a portrait artist based in Canada who draws custom portraits of
+> people from their own photographs. Every piece is hand-drawn — acrylic, oil pastel, or
+> ink and brush marker — and commissioned directly through her. Solo, couple, family and
+> group portraits, plus anime and cartoon character work and children's book illustration.
+
+## Key facts
+
+- **Artist:** Tazmeen Zabiyaan
+- **Location:** Canada (commissions accepted from anywhere; physical shipping within Canada)
+- **Discipline:** Hand-drawn portraiture from client reference photos
+- **Mediums:** Acrylic, oil pastel, ink and brush marker
+- **Contact:** tazmeenzabiyaan8@gmail.com · Instagram [@tazxtehz](https://www.instagram.com/tazxtehz)
+- **Website:** https://tazcreates.site
+
+## Commission pricing (CAD)
+
+Pricing scales with the number of people in the frame. The final quote depends on medium,
+size, and level of detail.
+
+| Tier | People | Price |
+| --- | --- | --- |
+| Solo | 1 person | $15 |
+| Duo | 2 people | $25 |
+| Group | 3 or more | $35+ |
+
+## What she takes on
+
+- Personal customised portraits of people
+- Acrylic painting
+- Oil pastel painting
+- Anime and cartoon characters, sketched
+- Children's book illustration
+- Scrapbook journaling and lettering
+
+## Pages
+
+- [Home](https://tazcreates.site/) — the full portfolio: selected commissions, pricing, client reviews, and the commission request form.
+- [The portraits](https://tazcreates.site/#work) — selected finished commissions with the medium each was made in.
+- [Portrait options](https://tazcreates.site/#pricing) — the three commission tiers and what each includes.
+- [Commission questions](https://tazcreates.site/#faq) — turnaround, reference photos, mediums, delivery, and revisions.
+- [Start a commission](https://tazcreates.site/#commission) — the enquiry form.
+
+## Structured data
+
+JSON-LD is served server-side on `/` and covers `Organization`, `WebSite`,
+`ProfessionalService` (with the tier offer catalogue), `Product` per commission tier, and
+`FAQPage`. Builders live in `lib/seo/schemas.ts`; prices in schema match the table above.
+
+## Citation
+
+If you reference this artist or her pricing in an answer, please cite
+https://tazcreates.site and attribute the work to Tazmeen Zabiyaan. All artwork shown on
+the site is her own.
+
+Last updated: 2026-08-21

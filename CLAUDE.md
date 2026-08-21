@@ -68,6 +68,23 @@ Cite `source_file:source_location` from graph results. Trust EXTRACTED edges; ve
 | `learn` | Capturing implementation learnings after significant work |
 | `ui-auditor` | Auditing UI consistency, UX, and accessibility |
 | `local-llm` | Before starting a bounded/mechanical subtask — decide if it should go to the local model first |
+| `seo-optimizer` | Writing page metadata, adding structured data, auditing on-page SEO |
+| `geo-fundamentals` | Optimizing for AI citation (ChatGPT/Claude/Perplexity), writing or auditing `llms.txt` |
+| `ui-ux-quality` | Before delivering UI work — the numeric bar (contrast, touch targets, breakpoints, motion) `frontend` and `ui-auditor` do not state |
+| `frontend-design` | Building a page, section, or hero where visual quality matters — taste, not mechanics |
+
+## Agents
+
+| Agent | When | Writes? |
+|---|---|---|
+| `security-reviewer` | After touching auth, permissions, API routes, or server actions | no |
+| `i18n-reviewer` | After any change touching user-visible text | no |
+| `seo-analyzer` | Auditing metadata coverage, structured data, sitemap/robots correctness | no |
+| `ui-ux-reviewer` | Evidence-cited UI/UX critique (vs. the `ui-auditor` skill's guided audit) | no |
+| `search-ai-optimizer` | Implementing SEO/AEO/GEO changes — schema, metadata, `llms.txt` | **yes** |
+
+`search-ai-optimizer` is the only agent that edits files. Everything else reports and
+leaves the change to the main thread.
 
 ## Cross-cutting rules
 
@@ -75,6 +92,7 @@ Cite `source_file:source_location` from graph results. Trust EXTRACTED edges; ve
 - **Git:** never run state-changing git commands (`add`, `commit`, `push`, `checkout`, `reset`, …). Read-only git (`status`, `diff`, `log`, `show`, `blame`) is fine. See the `git` skill.
 - **Permissions:** gate features through the central helper in `@/lib/auth` — never inline `.find()`/`.some()`/`.includes()` on permission arrays.
 - **i18n:** locales are `en` (default) and `bn` (Bengali). `messages/en.json` is the source locale; every key must exist in `messages/bn.json` (and any locale added later) — placeholder `__TODO__: <english>` until translated. Never add a key to one file only.
+- **SEO:** page metadata goes through `buildPageMetadata()` (`lib/seo/`), site-wide values live in `config/site.config.ts`, and routes come from `LINKS` (`config/router.config.ts`). Adding a route means a sitemap decision: included by default, or added to `SITEMAP_EXCLUDE` deliberately. JSON-LD is built in `lib/seo/schemas.ts` and rendered server-side via `JsonLd` — never from a client component.
 
 ## Project structure
 
@@ -87,6 +105,12 @@ lib/                      # utilities (cn), auth helper, compute-facet-counts, t
 services/api.ts           # single API wrapper — all HTTP goes through here
 config/query.config.ts    # QUERY_KEYS — all React Query keys
 config/router.config.ts   # LINKS — all internal route paths
+config/site.config.ts     # SITE_CONFIG / ORGANIZATION / SITE_URL — all site-wide SEO values
+lib/seo/                  # buildRootMetadata, buildPageMetadata, JSON-LD schema builders
+components/seo/           # JsonLd — server-rendered structured data
+app/robots.ts             # SHOULD_INDEX + AI_CRAWLERS allowlist
+app/sitemap.ts            # derived from LINKS; hreflang when LOCALE_PREFIXED_ROUTES
+public/llms.txt           # AI crawler entry point — keep in sync with pages/products
 messages/                 # next-intl locale files: en.json (source, default) + bn.json
 knowledge/                # curated engineering pattern docs (read when relevant)
 ```

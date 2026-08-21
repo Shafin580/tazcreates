@@ -20,6 +20,6 @@ module.exports = createJestConfig({
   testPathIgnorePatterns: ["/node_modules/", "/.next/"],
   // ESM-only deps that must be transformed (default is to skip node_modules).
   transformIgnorePatterns: [
-    "/node_modules/(?!(.pnpm/)?(@base-ui|radix-ui|@radix-ui|lucide-react|sonner|embla-carousel-react|react-day-picker|vaul|cmdk|framer-motion|react-resizable-panels|next-intl|use-intl|@tanstack/react-query|msw|@mswjs|@open-draft|until-async|strict-event-emitter|@bundled-es-modules|headers-polyfill)(/|@))"
+    "/node_modules/(?!(.pnpm/)?(@base-ui|radix-ui|@radix-ui|lucide-react|sonner|embla-carousel-react|react-day-picker|vaul|cmdk|framer-motion|lenis|react-resizable-panels|next-intl|use-intl|@tanstack/react-query|msw|@mswjs|@open-draft|until-async|strict-event-emitter|@bundled-es-modules|headers-polyfill)(/|@))"
   ]
 });

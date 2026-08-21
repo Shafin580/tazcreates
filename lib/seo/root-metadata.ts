@@ -34,7 +34,9 @@ export function buildRootMetadata(config: SiteConfig): Metadata {
       card: "summary_large_image",
       title: config.defaultTitle,
       description: config.defaultDescription,
-      images: [config.ogImage.path]
+      // Full object, not a bare path — a bare string drops twitter:image:alt,
+      // which is the card's only accessible description.
+      images: [ogImage]
     },
     icons: { icon: "/favicon.ico" },
     robots: { index: true, follow: true }

@@ -104,7 +104,7 @@ export const SITE = {
         id: "couple-duo",
         src: "/art/couple-duo.jpg",
         alt: "Illustrated portrait of a couple embracing, surrounded by hand-lettered text and stars",
-        medium: "Mixed media",
+        medium: "Markers",
         caption: "In every universe",
         width: 799,
         height: 786
@@ -113,7 +113,7 @@ export const SITE = {
         id: "solo-roses",
         src: "/art/solo-roses.jpg",
         alt: "Illustrated solo portrait of a woman with long dark red hair against a background of pink roses",
-        medium: "Oil pastel",
+        medium: "Markers",
         caption: "Summer of roses",
         width: 800,
         height: 800
@@ -131,7 +131,7 @@ export const SITE = {
         id: "couple-green",
         src: "/art/couple-green.jpg",
         alt: "Illustrated portrait of a couple lying together on a green floral background",
-        medium: "Acrylic",
+        medium: "Markers",
         caption: "Resting",
         width: 600,
         height: 800
@@ -140,7 +140,7 @@ export const SITE = {
         id: "solo-green-dress",
         src: "/art/solo-green-dress.jpg",
         alt: "Illustrated portrait of a woman in a green dress against a teal heart",
-        medium: "Acrylic",
+        medium: "Markers",
         caption: "Green heart",
         width: 600,
         height: 800

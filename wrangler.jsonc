@@ -17,6 +17,26 @@
   // public internet instead of looping back inside the isolate — what Next expects.
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
 
+  // `wrangler deploy` makes this file the source of truth and overwrites whatever the
+  // dashboard says. Configure routes here, not there — a deploy from a config missing
+  // these keys detached the custom domain, re-enabled workers.dev, and wiped every var.
+  "workers_dev": false,
+  "routes": [{ "pattern": "tazcreates.site", "custom_domain": true }],
+
+  // Non-secret runtime values only, read by app/api/commission/route.ts. The list is
+  // authoritative: anything omitted here is DELETED from the Worker on deploy.
+  //
+  // Secrets never go in this file — it is committed. Set RESEND_API_KEY and
+  // TURNSTILE_SECRET_KEY with `wrangler secret put <NAME>`. Secrets are stored outside
+  // this config and survive deploys untouched, which plaintext vars do not.
+  //
+  // NEXT_PUBLIC_* are absent on purpose: Next inlines those at build time from
+  // .env.local, so a Worker runtime var for them would have no effect.
+  "vars": {
+    "CONTACT_TO_EMAIL": "tazmeenzabiyaan8@gmail.com",
+    "CONTACT_FROM_EMAIL": "commissions@tazcreates.site"
+  },
+
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"

@@ -2,7 +2,6 @@ import {
   Body,
   Button,
   Container,
-  Head,
   Heading,
   Html,
   Link,
@@ -14,11 +13,10 @@ import type { CommissionInput } from "@/lib/commission-schema";
 import { SITE } from "@/content/site";
 import { SITE_URL } from "@/config/site.config";
 import {
+  EmailHead,
   BAND_BACKGROUND,
   COLORS,
-  EMAIL_CSS,
   FONT,
-  FONT_HREF,
   Field,
   GoldRule,
   Hairline,
@@ -52,10 +50,7 @@ export function CommissionRequestEmail({ data }: { data: CommissionInput }) {
 
   return (
     <Html lang="en">
-      <Head>
-        <link rel="stylesheet" href={FONT_HREF} />
-        <style>{EMAIL_CSS}</style>
-      </Head>
+      <EmailHead />
       <Preview>{`${SITE.email.eyebrow} — ${data.name} (${type})`}</Preview>
       <Body
         className="page"
@@ -74,7 +69,7 @@ export function CommissionRequestEmail({ data }: { data: CommissionInput }) {
               style={{
                 margin: 0,
                 fontFamily: FONT.body,
-                fontSize: 12,
+                fontSize: 13,
                 lineHeight: "16px",
                 letterSpacing: 2,
                 textTransform: "uppercase",
@@ -96,8 +91,14 @@ export function CommissionRequestEmail({ data }: { data: CommissionInput }) {
               {data.name}
             </Heading>
             <Text
-              style={{ margin: "4px 0 0", fontFamily: FONT.body, fontSize: 15, lineHeight: "24px" }}>
+              style={{
+                margin: "4px 0 0",
+                fontFamily: FONT.body,
+                fontSize: 15,
+                lineHeight: "24px"
+              }}>
               <Link
+                className="breakable"
                 href={`mailto:${data.email}`}
                 style={{ ...linkStyle, color: COLORS.blush }}>
                 {data.email}
@@ -125,16 +126,8 @@ export function CommissionRequestEmail({ data }: { data: CommissionInput }) {
             <Section style={{ marginTop: 24 }}>
               <Field label={SITE.email.portraitType} value={type} />
               <Field label={SITE.email.people} value={data.people} />
-              <Field
-                label={SITE.email.medium}
-                value={data.medium}
-                fallback={empty.medium}
-              />
-              <Field
-                label={SITE.email.deadline}
-                value={data.deadline}
-                fallback={empty.notSet}
-              />
+              <Field label={SITE.email.medium} value={data.medium} fallback={empty.medium} />
+              <Field label={SITE.email.deadline} value={data.deadline} fallback={empty.notSet} />
               <Field label={SITE.email.budget} value={data.budget} fallback={empty.notSet} />
             </Section>
 

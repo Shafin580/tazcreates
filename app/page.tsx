@@ -58,7 +58,7 @@ export default function Home() {
       name: `${tier.tier} portrait commission`,
       description: `Hand-drawn ${tier.tier.toLowerCase()} portrait — ${tier.people.toLowerCase()}. ${SITE.pricing.note}`,
       path: `${LINKS.HOME}#pricing`,
-      imagePath: tier.artwork,
+      imagePath: tier.photos[0].src,
       sku: `commission-${tier.id}`,
       price: { amount, currency: "CAD" }
     });

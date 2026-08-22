@@ -22,7 +22,7 @@ export function FloatingStars() {
       animate={prefersReducedMotion ? undefined : { y: [0, 16, 0], rotate: [0, 3, 0] }}
       transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}>
       <Image
-        src="/texture/glossy-stars.png"
+        src="/texture/glossy-stars.webp"
         alt=""
         width={800}
         height={800}

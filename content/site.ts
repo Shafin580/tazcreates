@@ -19,11 +19,11 @@ export const SITE = {
     tagline: "A portrait artist based in Canada",
     signature: "— Taz",
     portrait: {
-      src: "/photos/artist-mural.jpg",
+      src: "/photos/artist-mural.webp",
       alt: "Tazmeen Zabiyaan standing in front of a blue and pink graffiti mural"
     },
     avatar: {
-      src: "/photos/avatar-chibi.png",
+      src: "/photos/avatar-chibi.webp",
       alt: "Tazmeen's illustrated self-portrait, holding a paintbrush and palette"
     }
   },
@@ -65,11 +65,11 @@ export const SITE = {
     ],
     textures: [
       {
-        src: "/texture/oil-pastels.png",
+        src: "/texture/oil-pastels.webp",
         alt: "An open box of well-used oil pastels in every colour"
       },
       {
-        src: "/texture/brush-markers.png",
+        src: "/texture/brush-markers.webp",
         alt: "A fan of pastel-coloured brush markers"
       }
     ]
@@ -93,7 +93,7 @@ export const SITE = {
     items: [
       {
         id: "family-group",
-        src: "/art/family-group.jpg",
+        src: "/art/group/family-group.webp",
         alt: "Illustrated family portrait of two parents, a child and a baby, titled Nayaz & Nayef's family",
         medium: "Ink & marker",
         caption: "Nayaz & Nayef's family",
@@ -102,7 +102,7 @@ export const SITE = {
       },
       {
         id: "couple-duo",
-        src: "/art/couple-duo.jpg",
+        src: "/art/duo/couple-duo.webp",
         alt: "Illustrated portrait of a couple embracing, surrounded by hand-lettered text and stars",
         medium: "Markers",
         caption: "In every universe",
@@ -111,16 +111,16 @@ export const SITE = {
       },
       {
         id: "solo-roses",
-        src: "/art/solo-roses.jpg",
+        src: "/art/solo/solo-roses.webp",
         alt: "Illustrated solo portrait of a woman with long dark red hair against a background of pink roses",
         medium: "Markers",
         caption: "Summer of roses",
-        width: 800,
-        height: 800
+        width: 1179,
+        height: 1179
       },
       {
         id: "besties-graduation",
-        src: "/art/besties-graduation.jpg",
+        src: "/art/duo/besties-graduation.webp",
         alt: "Illustrated portrait of two friends in graduation caps holding bouquets, titled Besties",
         medium: "Ink & marker",
         caption: "Besties",
@@ -129,7 +129,7 @@ export const SITE = {
       },
       {
         id: "couple-green",
-        src: "/art/couple-green.jpg",
+        src: "/art/duo/couple-green.webp",
         alt: "Illustrated portrait of a couple lying together on a green floral background",
         medium: "Markers",
         caption: "Resting",
@@ -138,12 +138,12 @@ export const SITE = {
       },
       {
         id: "solo-green-dress",
-        src: "/art/solo-green-dress.jpg",
+        src: "/art/solo/solo-green-dress.webp",
         alt: "Illustrated portrait of a woman in a green dress against a teal heart",
         medium: "Markers",
         caption: "Green heart",
-        width: 600,
-        height: 800
+        width: 1180,
+        height: 1572
       }
     ]
   },
@@ -153,31 +153,153 @@ export const SITE = {
     title: "Portrait options",
     body: "Pricing scales with the number of people in the frame. Message me with a reference photo and I'll quote the rest.",
     note: "Prices in CAD. Final quote depends on medium, size and detail.",
+    viewGallery: "View gallery",
+    photosLabel: "photos",
+    /**
+     * Each tier carries every piece in that tier's folder, newest curation first.
+     *
+     * `photos[0]` is the card image; a tier with more than one photo renders a
+     * gallery. Group has a single piece, so it stays a plain image — see
+     * `pricing-section.tsx`.
+     *
+     * Alt text and captions were written by opening each image, not inferred from the
+     * filename. `duo-3` and `duo-5` are both hand-lettered "Besties" and would be
+     * indistinguishable otherwise. Medium is "Markers" for the newer pieces because the
+     * marker pens are visible in frame in each photograph.
+     */
     tiers: [
       {
         id: "solo",
         tier: "Solo",
         price: "$15",
         people: "One person",
-        artwork: "/art/solo-roses.jpg",
-        alt: "Illustrated solo portrait of a woman with long dark red hair against pink roses"
+        photos: [
+          {
+            id: "solo-roses",
+            src: "/art/solo/solo-roses.webp",
+            width: 1179,
+            height: 1179,
+            caption: "Summer of roses",
+            medium: "Markers",
+            alt: "Illustrated solo portrait of a woman with long dark red hair against a background of pink roses"
+          },
+          {
+            id: "solo-cafe",
+            src: "/art/solo/solo-1.webp",
+            width: 1179,
+            height: 1179,
+            caption: "Café evening",
+            medium: "Markers",
+            alt: "Illustrated portrait of a woman in a cream wrap top seated at a café table, with warm hanging bulb lights and a potted plant behind her"
+          },
+          {
+            id: "solo-birthday",
+            src: "/art/solo/solo-4.webp",
+            width: 1179,
+            height: 1179,
+            caption: "Happy birthday, Gloria",
+            medium: "Markers",
+            alt: "Illustrated birthday portrait of a woman with long wavy brown hair in a blue top, under hand-lettered text reading Happy Birthday Gloria"
+          },
+          {
+            id: "solo-green-dress",
+            src: "/art/solo/solo-green-dress.webp",
+            width: 1180,
+            height: 1572,
+            caption: "Green heart",
+            medium: "Markers",
+            alt: "Illustrated portrait of a woman in a green dress against a teal heart"
+          },
+          {
+            id: "solo-protein",
+            src: "/art/solo/solo-5.webp",
+            width: 1180,
+            height: 1572,
+            caption: "Gym day",
+            medium: "Markers",
+            alt: "Illustrated portrait of a young man in a bucket hat and glasses holding a phone, wearing a navy patterned t-shirt"
+          }
+        ]
       },
       {
         id: "duo",
         tier: "Duo",
         price: "$25",
         people: "Two people",
-        artwork: "/art/couple-duo.jpg",
-        alt: "Illustrated portrait of a couple embracing",
-        featured: true
+        featured: true,
+        photos: [
+          {
+            id: "couple-duo",
+            src: "/art/duo/couple-duo.webp",
+            width: 799,
+            height: 786,
+            caption: "In every universe",
+            medium: "Markers",
+            alt: "Illustrated portrait of a couple embracing, surrounded by hand-lettered text and stars"
+          },
+          {
+            id: "duo-lanterns",
+            src: "/art/duo/duo-1.webp",
+            width: 1180,
+            height: 1572,
+            caption: "Lantern night",
+            medium: "Markers",
+            alt: "Illustrated portrait of a couple at night, a woman in a pink floral hijab and a man in a denim jacket, beneath hanging lanterns and a starry sky"
+          },
+          {
+            id: "besties-graduation",
+            src: "/art/duo/besties-graduation.webp",
+            width: 800,
+            height: 800,
+            caption: "Besties, graduation day",
+            medium: "Ink & marker",
+            alt: "Illustrated portrait of two friends in graduation caps holding bouquets"
+          },
+          {
+            id: "duo-wreath",
+            src: "/art/duo/duo-3.webp",
+            width: 1179,
+            height: 1567,
+            caption: "Besties in blue",
+            medium: "Markers",
+            alt: "Illustrated portrait of two friends framed by a wreath of blue and gold flowers, under hand-lettered text reading Besties"
+          },
+          {
+            id: "duo-kurtas",
+            src: "/art/duo/duo-5.webp",
+            width: 1180,
+            height: 1572,
+            caption: "Besties in bloom",
+            medium: "Markers",
+            alt: "Illustrated portrait of two women in embroidered kurtas surrounded by scattered flowers, under hand-lettered text reading Besties"
+          },
+          {
+            id: "couple-green",
+            src: "/art/duo/couple-green.webp",
+            width: 600,
+            height: 800,
+            caption: "Resting",
+            medium: "Markers",
+            alt: "Illustrated portrait of a couple lying together on a green floral background"
+          }
+        ]
       },
       {
         id: "group",
         tier: "Group",
         price: "$35+",
         people: "Three or more",
-        artwork: "/art/family-group.jpg",
-        alt: "Illustrated family portrait of four people"
+        photos: [
+          {
+            id: "family-group",
+            src: "/art/group/family-group.webp",
+            width: 600,
+            height: 800,
+            caption: "Nayaz & Nayef's family",
+            medium: "Ink & marker",
+            alt: "Illustrated family portrait of two parents, a child and a baby"
+          }
+        ]
       }
     ]
   },
@@ -190,14 +312,14 @@ export const SITE = {
         id: "hafsa",
         name: "Hafsa Gori",
         quote: "Thanks for capturing our beautiful moment so perfectly.",
-        artwork: "/art/besties-graduation.jpg",
+        artwork: "/art/duo/besties-graduation.webp",
         alt: "Illustrated portrait of two friends in graduation caps"
       },
       {
         id: "kauther",
         name: "Kauther Idris",
         quote: "I love everything about my portrait, she captured me so flawlessly.",
-        artwork: "/art/solo-green-dress.jpg",
+        artwork: "/art/solo/solo-green-dress.webp",
         alt: "Illustrated portrait of a woman in a green dress"
       },
       {
@@ -205,12 +327,12 @@ export const SITE = {
         name: "Tawsif Azmayeen",
         quote:
           "Every detail about us and our moment together is captured so well. It's identical to us! We are obsessed.",
-        artwork: "/art/couple-green.jpg",
+        artwork: "/art/duo/couple-green.webp",
         alt: "Illustrated portrait of a couple on a green floral background"
       }
     ],
     collage: {
-      src: "/social/dm-collage-tall.jpg",
+      src: "/social/dm-collage-tall.webp",
       width: 515,
       height: 798,
       alt: "A collage of Instagram messages from clients reacting to their finished portraits"
@@ -438,4 +560,5 @@ export const SITE = {
 
 export type GalleryItem = (typeof SITE.gallery.items)[number];
 export type PricingTier = (typeof SITE.pricing.tiers)[number];
+export type TierPhoto = PricingTier["photos"][number];
 export type Review = (typeof SITE.reviews.items)[number];

@@ -28,9 +28,17 @@ const size = { width: 1200, height: 630 };
 const OUT = join(process.cwd(), "public", "og.png");
 
 async function render(): Promise<Buffer> {
-  const portrait = await readFile(
-    join(process.cwd(), "public", SITE.gallery.items[2].src.replace(/^\//, ""))
-  );
+  /**
+   * Read from `assets-source/`, not `public/`.
+   *
+   * Everything under `public/` is WebP now, and Satori cannot decode WebP — it fails with
+   * "RangeError: Offset is outside the bounds of the DataView". This is a build-only JPEG
+   * of the same artwork, downscaled to 800px because the card renders it at 392x490;
+   * embedding the full-resolution original is most of why the card was 592 KB.
+   *
+   * `assets-source/` is outside `public/`, so it is never served.
+   */
+  const portrait = await readFile(join(process.cwd(), "assets-source", "og-portrait.jpg"));
   const portraitSrc = `data:image/jpeg;base64,${portrait.toString("base64")}`;
 
   const image = new ImageResponse(

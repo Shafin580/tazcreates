@@ -1,4 +1,4 @@
-import { Hr, Section, Text } from "@react-email/components";
+import { Head, Hr, Link, Section, Text } from "@react-email/components";
 import { SITE } from "@/content/site";
 import type { PortraitType } from "@/lib/commission-schema";
 
@@ -70,9 +70,39 @@ export const EMAIL_CSS = `
   td { mso-line-height-rule: exactly; }
   img { border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; }
 
+  /* Long unbroken tokens — an email address or a Drive URL is a single token and
+     will not wrap on its own, which is what pushed content past the card edge. */
+  .breakable { word-break: break-word; overflow-wrap: anywhere; }
+  /* A recipient's name goes into the button label, and names can be long. */
+  .btn { max-width: 100%; box-sizing: border-box; }
+
   @media (max-width: 600px) {
-    .sm-px { padding-left: 20px !important; padding-right: 20px !important; }
-    .sm-block { display: block !important; width: 100% !important; text-align: center !important; }
+    /* React Email's <Section> renders a <table> and puts the style on the table, but
+       the inner <td> is what actually holds the content — so padding set on the table
+       leaves text flush against the card edge. Target both. */
+    .sm-px,
+    .sm-px > tbody > tr > td,
+    .sm-px > tr > td {
+      padding-left: 20px !important;
+      padding-right: 20px !important;
+    }
+    /* width:100% without border-box adds the 32px side padding ON TOP of the full
+       width, which is what pushed the reply button ~60px past the card.
+       NOTE: no backticks in this string - it is a JS template literal. */
+    .sm-block {
+      display: block !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+      text-align: center !important;
+      padding-left: 16px !important;
+      padding-right: 16px !important;
+      word-break: break-word !important;
+    }
+    /* Readability on a phone: the desktop sizes below are a floor, not a target. */
+    .sm-h1 { font-size: 28px !important; line-height: 34px !important; }
+    .sm-value { font-size: 16px !important; line-height: 26px !important; }
+    .sm-body { font-size: 16px !important; line-height: 27px !important; }
+    .sm-btn { display: block !important; width: auto !important; padding: 15px 20px !important; }
   }
 
   @media (prefers-color-scheme: dark) {
@@ -105,9 +135,11 @@ export function portraitLabel(id: PortraitType): string {
 export const labelStyle = {
   margin: 0,
   fontFamily: FONT.body,
-  fontSize: 12,
-  lineHeight: "16px",
-  letterSpacing: 1.4,
+  // 13px with slightly tighter tracking: 12px uppercase at 1.4 letter-spacing was the
+  // hardest text in the message to read, and it is the text that names every value.
+  fontSize: 13,
+  lineHeight: "18px",
+  letterSpacing: 1.1,
   textTransform: "uppercase",
   color: COLORS.label
 } as const;
@@ -115,8 +147,11 @@ export const labelStyle = {
 export const valueStyle = {
   margin: "3px 0 0",
   fontFamily: FONT.body,
-  fontSize: 15,
-  lineHeight: "24px",
+  // 16/26 rather than 15/24. Mail clients do not let the reader zoom text the way a
+  // browser does, and iOS Mail bumps anything under 13px on its own — which breaks the
+  // layout it was measured against. Setting a comfortable size is the safer control.
+  fontSize: 16,
+  lineHeight: "26px",
   color: COLORS.ink,
   whiteSpace: "pre-wrap"
 } as const;
@@ -204,3 +239,26 @@ export const linkStyle = {
   textDecoration: "underline",
   wordBreak: "break-all"
 } as const;
+
+/**
+ * The `<head>` both commission emails share.
+ *
+ * The viewport meta is the important line. Without it a mobile mail client lays the
+ * message out at its ~980px desktop default and scales the result down, so the text
+ * arrives small and the card looks like it overflows — and, worse, the
+ * `@media (max-width: 600px)` block above can never match, because the viewport never
+ * reports a width below 600. That is why the responsive CSS appeared to do nothing.
+ *
+ * Centralised here so the two templates cannot drift apart on it again.
+ */
+export function EmailHead() {
+  return (
+    <Head>
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <meta name="color-scheme" content="light dark" />
+      <meta name="supported-color-schemes" content="light dark" />
+      <Link rel="stylesheet" href={FONT_HREF} />
+      <style>{EMAIL_CSS}</style>
+    </Head>
+  );
+}

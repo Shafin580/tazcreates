@@ -3,7 +3,6 @@ import {
   Button,
   Column,
   Container,
-  Head,
   Heading,
   Html,
   Img,
@@ -17,11 +16,10 @@ import type { CommissionInput } from "@/lib/commission-schema";
 import { SITE } from "@/content/site";
 import { SITE_URL } from "@/config/site.config";
 import {
+  EmailHead,
   BAND_BACKGROUND,
   COLORS,
-  EMAIL_CSS,
   FONT,
-  FONT_HREF,
   Field,
   GoldRule,
   Hairline,
@@ -60,10 +58,7 @@ function firstName(name: string): string {
 export function CommissionConfirmationEmail({ data }: { data: CommissionInput }) {
   return (
     <Html lang="en">
-      <Head>
-        <link rel="stylesheet" href={FONT_HREF} />
-        <style>{EMAIL_CSS}</style>
-      </Head>
+      <EmailHead />
       <Preview>{client.preview}</Preview>
       <Body
         className="page"
@@ -93,7 +88,7 @@ export function CommissionConfirmationEmail({ data }: { data: CommissionInput })
                   style={{
                     margin: 0,
                     fontFamily: FONT.body,
-                    fontSize: 12,
+                    fontSize: 13,
                     lineHeight: "16px",
                     letterSpacing: 2,
                     textTransform: "uppercase",
@@ -249,11 +244,14 @@ export function CommissionConfirmationEmail({ data }: { data: CommissionInput })
                 {`${SITE.footer.instagramLabel} ${SITE.contact.instagramHandle}`}
               </Link>
             </Text>
-            <Text style={{ margin: "4px 0 0", fontFamily: FONT.body, fontSize: 14, lineHeight: "24px" }}>
-              <Link
-                className="link"
-                href={`mailto:${SITE.contact.email}`}
-                style={linkStyle}>
+            <Text
+              style={{
+                margin: "4px 0 0",
+                fontFamily: FONT.body,
+                fontSize: 14,
+                lineHeight: "24px"
+              }}>
+              <Link className="link" href={`mailto:${SITE.contact.email}`} style={linkStyle}>
                 {SITE.contact.email}
               </Link>
             </Text>

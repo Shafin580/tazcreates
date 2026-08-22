@@ -57,6 +57,7 @@ import { SiteHeader } from "../site-header";
 import { FaqSection } from "../faq-section";
 import { ProcessSection } from "../process-section";
 import { SupportSection } from "../support-section";
+import { PricingSection } from "../pricing-section";
 import { CommissionForm } from "../commission-form";
 import { MotionToggle } from "../motion-toggle";
 import { MotionPreferenceProvider } from "../motion-preference";
@@ -211,5 +212,53 @@ describe("commission schema", () => {
     delete (withoutToken as { turnstileToken?: string }).turnstileToken;
     expect(commissionSchema.safeParse(withoutToken).success).toBe(false);
     expect(commissionFormSchema.safeParse(withoutToken).success).toBe(true);
+  });
+});
+
+describe("PricingSection tier galleries", () => {
+  it("opens a gallery only for tiers with more than one photo", () => {
+    wrap(<PricingSection />);
+    for (const tier of SITE.pricing.tiers) {
+      const trigger = screen.queryByRole("button", {
+        name: new RegExp(`${tier.tier}, ${tier.photos.length} `, "i")
+      });
+      if (tier.photos.length > 1) {
+        expect(trigger).not.toBeNull();
+        expect(trigger).toHaveAttribute("data-qa", `portfolio.pricing.gallery.${tier.id}`);
+      } else {
+        // A control promising a gallery of one is a lie about what it does.
+        expect(
+          document.querySelector(`[data-qa="portfolio.pricing.gallery.${tier.id}"]`)
+        ).toBeNull();
+      }
+    }
+  });
+
+  it("shows the tier's own photos, and stays inside that tier", async () => {
+    const user = userEvent.setup();
+    wrap(<PricingSection />);
+    const solo = SITE.pricing.tiers.find((t) => t.id === "solo")!;
+    await user.click(
+      screen.getByRole("button", { name: new RegExp(`Solo, ${solo.photos.length} `, "i") })
+    );
+    const dialog = await screen.findByRole("dialog");
+    expect(dialog).toHaveAccessibleName(solo.photos[0].caption);
+    // First photo => no previous, and a next exists because Solo has several.
+    expect(within(dialog).getByRole("button", { name: SITE.a11y.prevPortrait })).toBeDisabled();
+    expect(within(dialog).getByRole("button", { name: SITE.a11y.nextPortrait })).toBeEnabled();
+  });
+
+  it("every tier photo has non-empty alt text", () => {
+    for (const tier of SITE.pricing.tiers) {
+      for (const photo of tier.photos) {
+        expect(photo.alt.trim().length).toBeGreaterThan(15);
+        expect(photo.alt).not.toContain("__TODO__");
+      }
+    }
+  });
+
+  it("has no axe violations", async () => {
+    const { container } = wrap(<PricingSection />);
+    expect(await axe(container)).toHaveNoViolations();
   });
 });

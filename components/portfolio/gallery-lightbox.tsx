@@ -5,7 +5,23 @@ import { useCallback, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useReducedMotionPreference } from "./motion-preference";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import { SITE, type GalleryItem } from "@/content/site";
+import { SITE } from "@/content/site";
+
+/**
+ * The shape the lightbox needs, declared structurally rather than as one section's
+ * concrete type. Both `SITE.gallery.items` and `SITE.pricing.tiers[].photos` satisfy it,
+ * so the gallery section and the pricing tiers share one viewer instead of growing a
+ * second implementation.
+ */
+export type LightboxPhoto = {
+  id: string;
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  caption: string;
+  medium: string;
+};
 import { cn } from "@/lib/utils";
 
 /**
@@ -25,7 +41,7 @@ export function GalleryLightbox({
   hasPrev,
   hasNext
 }: {
-  item: GalleryItem | null;
+  item: LightboxPhoto | null;
   onClose: () => void;
   onPrev: () => void;
   onNext: () => void;

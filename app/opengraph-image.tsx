@@ -8,6 +8,13 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 /**
+ * Pinned static because the body below reads fonts and artwork off disk with `node:fs`.
+ * On Cloudflare Workers there is no filesystem at request time, so this route has to be
+ * baked at build time or it fails in production.
+ */
+export const dynamic = "force-static";
+
+/**
  * The social card, generated rather than hand-exported.
  *
  * What this replaces: `SITE_CONFIG.ogImage` used to point at a gallery piece — a

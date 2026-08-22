@@ -1,0 +1,39 @@
+/**
+ * Cloudflare Workers config for the OpenNext adapter.
+ *
+ * This replaces the old `@cloudflare/next-on-pages` Pages setup: that package is
+ * deprecated and does not support Next 16. `opennextjs-cloudflare build` compiles the
+ * Next output into `.open-next/worker.js` plus a static `.open-next/assets` directory,
+ * both of which are pointed at below.
+ */
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "tazcreates",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-08-01",
+
+  // nodejs_compat: resend and node-forge both reach for Node built-ins.
+  // global_fetch_strictly_public: a fetch to this site's own hostname goes out over the
+  // public internet instead of looping back inside the isolate — what Next expects.
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+
+  // next/image is used with local files in public/. Without an image binding or a custom
+  // loader, optimization fails at runtime. Transformations are metered beyond the free
+  // tier — set `images: { unoptimized: true }` in next.config.ts to opt out entirely.
+  "images": {
+    "binding": "IMAGES"
+  },
+
+  // Must match "name" above. OpenNext uses it for cache revalidation callbacks.
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "tazcreates"
+    }
+  ]
+}

@@ -3,8 +3,7 @@
  * import from here so a route rename is one edit and the sitemap stays honest.
  */
 export const LINKS = {
-  HOME: "/",
-  COMPONENT_DEMO: "/component-demo"
+  HOME: "/"
 } as const;
 
 export type AppLink = (typeof LINKS)[keyof typeof LINKS];
@@ -14,11 +13,7 @@ export type AppLink = (typeof LINKS)[keyof typeof LINKS];
  * areas, and anything reachable only via query params. Listing a route here is a
  * decision — `seo-analyzer` will not report it as missing.
  */
-export const SITEMAP_EXCLUDE: AppLink[] = [
-  // Internal component catalog — useful in development, not something a portfolio
-  // wants indexed alongside the work.
-  LINKS.COMPONENT_DEMO
-];
+export const SITEMAP_EXCLUDE: AppLink[] = [];
 
 /**
  * Whether routes are served under a `/<locale>` segment (next-intl's prefixed

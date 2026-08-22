@@ -10,7 +10,7 @@ import { SITE } from "@/content/site";
 import { commissionSchema, commissionFormSchema } from "@/lib/commission-schema";
 
 // `next-intl` ships ESM that jest will not transform here; the repo's established
-// pattern (see app/component-demo/__tests__/component-demo.test.tsx) is to mock it and
+// pattern is to mock it and
 // read the real messages file, so the shared `CustomSelect` still gets true strings.
 jest.mock("next-intl", () => {
   const actualReact = jest.requireActual("react") as typeof React;

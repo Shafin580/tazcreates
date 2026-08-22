@@ -50,6 +50,11 @@ function rateLimited(ip: string): boolean {
 }
 
 function clientIp(request: Request): string {
+  // Cloudflare sets this on every request that reaches the Worker and it cannot be
+  // spoofed by the client, so it wins over the forwarded headers below.
+  const cfIp = request.headers.get("cf-connecting-ip");
+  if (cfIp) return cfIp;
+
   const forwarded = request.headers.get("x-forwarded-for");
   if (forwarded) return forwarded.split(",")[0]!.trim();
   return request.headers.get("x-real-ip") ?? "unknown";

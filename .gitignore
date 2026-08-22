@@ -44,3 +44,7 @@ next-env.d.ts
 *.graphml
 graph.svg
 cypher.txt
+
+# cloudflare (OpenNext adapter — build output and local wrangler state)
+/.open-next/
+/.wrangler/

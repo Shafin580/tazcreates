@@ -33,8 +33,14 @@ export function CommissionForm() {
   // free of ref access, which React's rules-of-hooks lint (correctly) rejects when the
   // handler is created during render.
   const [challengeKey, setChallengeKey] = useState(0);
+  // Turnstile can fail for reasons the visitor cannot fix — most commonly error 110200,
+  // "domain not allowed", when the widget's site key does not list the host it is being
+  // served from. Without tracking that, `disabled={!token}` leaves the submit button dead
+  // forever with no explanation, which looks like a broken site.
+  const [challengeFailed, setChallengeFailed] = useState(false);
   const resetChallenge = () => {
     setToken("");
+    setChallengeFailed(false);
     setChallengeKey((k) => k + 1);
   };
 
@@ -265,9 +271,15 @@ export function CommissionForm() {
         <Turnstile
           key={challengeKey}
           siteKey={SITE_KEY}
-          onSuccess={setToken}
+          onSuccess={(t) => {
+            setToken(t);
+            setChallengeFailed(false);
+          }}
           onExpire={() => setToken("")}
-          onError={() => setToken("")}
+          onError={() => {
+            setToken("");
+            setChallengeFailed(true);
+          }}
           options={{ theme: "light", size: "flexible" }}
         />
       ) : null}
@@ -287,6 +299,15 @@ export function CommissionForm() {
       {status === "error" ? (
         <p role="alert" className="text-destructive text-sm" data-qa="portfolio.commission.error">
           {SITE.commission.error.body}
+        </p>
+      ) : null}
+
+      {challengeFailed ? (
+        <p
+          role="alert"
+          className="text-ink-muted text-sm"
+          data-qa="portfolio.commission.captcha-error">
+          {SITE.commission.captchaFailed}
         </p>
       ) : null}
 

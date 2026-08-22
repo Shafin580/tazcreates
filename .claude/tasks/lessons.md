@@ -50,3 +50,11 @@ shrinks it and fires later — I had it backwards and the reveal got worse, not 
 (2) A component-level `transition` prop OVERRIDES the transition inside a variant. A card
 with `variants={child}` plus `transition={{type:"spring"}}` for its hover ignored the
 variant's timing entirely. Scope hover timing inside `whileHover`, not on the component.
+
+## 2026-08-22 — Commission email templates
+Rule: (1) Do not run the full test suite as a routine verification step here — it does
+not exit on its own and leaves stray processes; run it only when the change touches
+tested code, with `--forceExit`. (2) "An email template" for this site means TWO: the
+commission flow has a client-facing auto-reply AND an artist-facing notification. Ask
+which, or build both. Delivered `components/email-template/commission-confirmation.html`
+(client) and `commission-request-admin.html` (artist).

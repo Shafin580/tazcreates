@@ -12,7 +12,9 @@ import {
   SheetTitle,
   SheetTrigger
 } from "@/components/ui/sheet";
-import { MotionToggle } from "./motion-toggle";
+// Motion toggle is intentionally disabled in the header (see the commented render
+// below). Import kept commented alongside it so re-enabling is a two-line uncomment.
+// import { MotionToggle } from "./motion-toggle";
 
 const SECTION_IDS = SITE.nav.links.map((l) => l.id);
 

@@ -129,15 +129,20 @@ describe("ProcessSection", () => {
 });
 
 describe("SupportSection", () => {
-  it("does not render a live link while the Buy Me a Coffee username is a placeholder", () => {
+  it("links to the artist's Buy Me a Coffee page", () => {
+    wrap(<SupportSection />);
+    const link = screen.getByRole("link", { name: new RegExp(SITE.support.cta, "i") });
+    expect(link).toHaveAttribute("href", `https://buymeacoffee.com/${SITE.support.username}`);
+    expect(link).toHaveAttribute("data-qa", "portfolio.support.cta");
+    expect(link).toHaveAttribute("rel", expect.stringContaining("noopener"));
+  });
+
+  it("never ships the placeholder handle in the URL", () => {
+    // The section is designed to render WITHOUT a link while the handle is unset; this
+    // guards the opposite direction — that a placeholder never reaches a live href.
     wrap(<SupportSection />);
     const link = screen.queryByRole("link", { name: new RegExp(SITE.support.cta, "i") });
-    // Guard against shipping buymeacoffee.com/__TODO__ in front of a real visitor.
-    if (SITE.support.username === "__TODO__") {
-      expect(link).toBeNull();
-    } else {
-      expect(link).toHaveAttribute("href", `https://buymeacoffee.com/${SITE.support.username}`);
-    }
+    expect(link?.getAttribute("href")).not.toContain("__TODO__");
   });
 
   it("has no axe violations", async () => {

@@ -304,13 +304,15 @@ export const SITE = {
   },
 
   /**
-   * ⚠️ BLOCKED — `username` needs the artist's real Buy Me a Coffee handle. The section
-   * renders a disabled state and logs a build-time warning until it is filled in, rather
-   * than shipping a link that 404s.
+   * Buy Me a Coffee handle — same as the Instagram handle. Verified live:
+   * https://buymeacoffee.com/tazxtehz returns 200.
+   *
+   * `support-section.tsx` gates its live link on this value not being the placeholder,
+   * so setting it here is the only change needed to activate the section.
    */
   support: {
     platform: "buymeacoffee",
-    username: "__TODO__",
+    username: "tazxtehz",
     eyebrow: "No commission needed",
     title: "Support the work",
     body: "If a portrait made you smile and you just want to say thanks, this keeps the pastels and paper stocked.",
@@ -351,6 +353,8 @@ export const SITE = {
       title: "That didn't send",
       body: "Something went wrong on my side. Message me on Instagram instead and I'll pick it up there."
     },
+    captchaFailed:
+      "The spam check could not load, so the form can't be submitted right now. Message me on Instagram or email me instead — both reach me just as fast.",
     unavailable:
       "The form is not connected yet. Message me on Instagram or email me directly and I'll reply the same way."
   },
@@ -373,7 +377,14 @@ export const SITE = {
     rights: "All artwork © Tazmeen Zabiyaan"
   },
 
-  /** Labels inside the notification email the artist receives. */
+  /**
+   * Copy for the two commission emails.
+   *
+   * The top-level labels are the ARTIST-facing set — third person, because they
+   * describe the visitor to her ("What they'd like drawn"). The confirmation that
+   * goes back to the visitor uses `SITE.commission.fields` instead, which is the
+   * second-person wording they already read on the form.
+   */
   email: {
     eyebrow: "New commission request",
     portraitType: "Portrait type",
@@ -383,7 +394,32 @@ export const SITE = {
     budget: "Budget",
     description: "What they'd like drawn",
     reference: "Reference",
-    replyHint: "Reply directly to this email to reach"
+    replyHint: "Reply directly to this email to reach",
+
+    /** Stand-ins for the optional fields a visitor left blank. */
+    empty: {
+      medium: "No preference",
+      notSet: "Not set",
+      none: "\u2014"
+    },
+
+    /** The notification the artist receives. Its preview line is built from the
+        request itself, so there is no static string for it here. */
+    admin: {
+      replyCta: "Reply to",
+      sentBy: "Sent by the commission form on"
+    },
+
+    /** The auto-reply the visitor receives. */
+    client: {
+      subject: "Your commission request \u2014 Tazmeen Zabiyaan",
+      preview: "Your commission request is with Tazmeen \u2014 here is everything you sent.",
+      eyebrow: "Commission request received",
+      greeting: "Hi",
+      body: "Here is what came through, so you know I have it right. If anything below is wrong, reply to this email and I'll fix it before I start.",
+      summaryHeading: "What you sent",
+      footerReason: "You are getting this because you sent a commission request through"
+    }
   },
 
   /** Strings that only ever reach assistive tech. */

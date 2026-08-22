@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<!--
+  ============================================================================
+  Tazcreates — commission confirmation (the email the CLIENT receives)
+  ============================================================================
+
+  Counterpart to emails/commission-request.tsx, which is the notification the
+  ARTIST receives — commission-request-admin.html in this folder is that same
+  notification as standalone HTML, styled to match this one. This file is the
+  auto-reply that goes back to the person who submitted the form.
+
+  Standalone HTML on purpose: both are pasted into Resend by hand, so neither
+  is imported, neither is bundled, and neither costs anything against the
+  3 MiB Worker script budget.
+
+  ---------------------------------------------------------------------------
+  VARIABLES — Resend triple-brace syntax, {{{NAME|fallback}}}
+  ---------------------------------------------------------------------------
+  {{{FIRST_NAME|there}}}          greeting
+  {{{PORTRAIT_TYPE|—}}}           "Solo — one person" / "Duo — two people" /
+                                  "Group — three or more"
+  {{{PEOPLE|—}}}                  integer, 1–20
+  {{{MEDIUM|No preference}}}      Acrylic / Oil pastel / Ink & marker / Anime
+  {{{DEADLINE|Not set}}}          free text, ≤60 chars
+  {{{BUDGET|Not set}}}            free text, ≤60 chars
+  {{{DESCRIPTION|—}}}             free text, ≤2000 chars
+  {{{REFERENCE_URL}}}             absolute URL — see the note on that block
+  {{{RESEND_UNSUBSCRIBE_URL}}}    Resend-provided
+
+  Only FIRST_NAME, EMAIL and RESEND_UNSUBSCRIBE_URL are filled in by Resend
+  itself, and only for audience-backed **Broadcasts**. A per-submission
+  confirmation is a transactional send, so the commission fields above must be
+  substituted before resend.emails.send() — or the file pasted into Resend's
+  Templates editor, which fills the same syntax. Either way the markup is
+  identical; only who does the substitution changes.
+
+  SECURITY: every variable sits in a text node, not an attribute — the one
+  exception is REFERENCE_URL, which is used as an href. Whatever fills it must
+  already be a validated URL. lib/commission-schema.ts enforces .url() on that
+  field upstream, so a value arriving from the site's own form is safe; do not
+  wire this template to an unvalidated source. Values are inserted, never
+  concatenated into raw HTML.
+
+  ---------------------------------------------------------------------------
+  COPY
+  ---------------------------------------------------------------------------
+  Transcribed from content/site.ts (SITE.artist, SITE.contact,
+  SITE.commission.fields, SITE.commission.success, SITE.pricing.note,
+  SITE.cta.primary, SITE.footer). The "read copy from SITE" rule governs
+  components; a file uploaded by hand to a third party cannot import it, so it
+  is copied here. Keep the two in sync when site copy changes.
+
+  Field labels come from SITE.commission.fields (the client's own form labels)
+  rather than SITE.email.* — the latter are written in the third person ("What
+  they'd like drawn") because they address the artist.
+
+  Three strings are new, having no home in content/site.ts: the preheader, the
+  header eyebrow ("Commission request received") and the summary heading
+  ("What you sent"). Move them into SITE if this email ever becomes a
+  component.
+
+  ---------------------------------------------------------------------------
+  THEME
+  ---------------------------------------------------------------------------
+  Hex equivalents of the app/globals.css oklch tokens, same constants as
+  emails/commission-request.tsx:
+
+    #FBF7F4  paper/background   #1A1416  ink/foreground
+    #C9647F  rose (primary)     #7A2E43  wine (secondary)
+    #E8DCD8  hairline border    #C8A06A  gold accent
+    #F4D9DC  blush fill (--muted)
+
+  Two deliberate departures, both for contrast (WCAG AA, 4.5:1 body):
+    - labels use #6F6664, not the #8A8180 in commission-request.tsx — that
+      value is 3.8:1 on white and fails.
+    - the header eyebrow is blush #F4D9DC, not rose #C9647F — rose on the wine
+      band is 2.4:1.
+
+  Dark mode inverts within the SAME blush palette. It deliberately does NOT
+  use the site's .dark tokens (app/globals.css) — that scale is green/purple
+  and would arrive looking like a different brand.
+
+  Fraunces / Manrope / Caveat are linked for the clients that honour webfonts
+  (Apple Mail, iOS); Gmail and Outlook strip the link and fall back to
+  Georgia / Helvetica / cursive, which is why every stack names them.
+-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="x-apple-disable-message-reformatting">
+  <meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
+  <meta name="color-scheme" content="light dark">
+  <meta name="supported-color-schemes" content="light dark">
+  <title>Your commission request — Tazmeen Zabiyaan</title>
+
+  <!--[if mso]>
+  <noscript><xml><o:OfficeDocumentSettings>
+    <o:PixelsPerInch>96</o:PixelsPerInch>
+  </o:OfficeDocumentSettings></xml></noscript>
+  <![endif]-->
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Manrope:wght@400;500;600&display=swap">
+
+  <!-- Only what cannot be inlined lives here: media queries and client resets. -->
+  <style>
+    :root { color-scheme: light dark; supported-color-schemes: light dark; }
+
+    body { margin: 0 !important; padding: 0 !important; width: 100% !important; }
+    table { border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+    td { mso-line-height-rule: exactly; }
+    img { border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; }
+    a { text-decoration: none; }
+
+    /* Gmail/Outlook.com like to re-colour and re-link plain text. */
+    u + #body a,
+    #MessageViewBody a {
+      color: inherit;
+      text-decoration: none;
+      font-size: inherit;
+      font-family: inherit;
+      font-weight: inherit;
+      line-height: inherit;
+    }
+
+    @media (max-width: 600px) {
+      .sm-w-full { width: 100% !important; }
+      .sm-px-20 { padding-left: 20px !important; padding-right: 20px !important; }
+      .sm-py-28 { padding-top: 28px !important; padding-bottom: 28px !important; }
+      .sm-block { display: block !important; width: 100% !important; }
+      .sm-text-center { text-align: center !important; }
+    }
+
+    /* Dark mode — blush palette inverted, not the site's .dark scale.
+       !important is required: inline styles win otherwise. */
+    @media (prefers-color-scheme: dark) {
+      .page      { background-color: #14100F !important; }
+      .card      { background-color: #241D20 !important; border-color: #3A3134 !important; }
+      .heading   { color: #FBF7F4 !important; }
+      .body-text { color: #DCD3D3 !important; }
+      .value     { color: #FBF7F4 !important; }
+      .label     { color: #B9AFAE !important; }
+      .meta      { color: #B9AFAE !important; }
+      .hair      { background-color: #3A3134 !important; }
+      .link      { color: #D98BA0 !important; }
+      .btn       { background-color: #FBF7F4 !important; color: #1A1416 !important; }
+      .sig       { color: #E3A2B4 !important; }
+    }
+  </style>
+</head>
+
+<body id="body" class="page" style="margin:0;padding:0;width:100%;background-color:#FBF7F4;font-family:'Manrope',Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;">
+
+  <!-- Preheader: the line the inbox shows next to the subject. Hidden in the body. -->
+  <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#FBF7F4;opacity:0;">
+    Your commission request is with Tazmeen — here is everything you sent.
+    &#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;
+  </div>
+
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" class="page" style="background-color:#FBF7F4;">
+    <tr>
+      <td align="center" style="padding:32px 12px;">
+
+        <!--[if mso]>
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600"><tr><td>
+        <![endif]-->
+
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" class="sm-w-full" style="width:600px;max-width:600px;">
+
+          <!-- ── Header band ───────────────────────────────────────────────
+               Solid wine is the fallback; the four radial washes are the
+               static form of the .mesh-bloom gradient in app/globals.css.
+               No animation — mail clients do not run keyframes. -->
+          <tr>
+            <td class="sm-px-20 sm-py-28" style="background-color:#7A2E43;background-image:radial-gradient(at 18% 22%, #B95E80 0px, transparent 55%),radial-gradient(at 82% 18%, #C36A5E 0px, transparent 52%),radial-gradient(at 72% 82%, #D8A97A 0px, transparent 50%),radial-gradient(at 25% 88%, #8E3A5C 0px, transparent 55%);border-radius:20px;padding:36px 32px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr>
+                  <td width="56" style="width:56px;padding-right:16px;vertical-align:middle;">
+                    <img src="https://tazcreates.site/photos/avatar-chibi.png" width="56" height="56" alt="Tazmeen's illustrated self-portrait, holding a paintbrush and palette" style="display:block;width:56px;height:56px;border-radius:28px;">
+                  </td>
+                  <td style="vertical-align:middle;">
+                    <p style="margin:0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:12px;line-height:16px;letter-spacing:2px;text-transform:uppercase;color:#F4D9DC;">
+                      Commission request received
+                    </p>
+                    <p style="margin:6px 0 0;font-family:'Fraunces',Georgia,'Times New Roman',serif;font-size:26px;line-height:32px;font-weight:600;letter-spacing:-0.02em;color:#FBF7F4;">
+                      Tazmeen Zabiyaan
+                    </p>
+                    <p style="margin:2px 0 0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:14px;line-height:20px;color:#F4D9DC;">
+                      Portrait Artist
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr><td style="height:16px;font-size:0;line-height:16px;">&nbsp;</td></tr>
+
+          <!-- ── Card ─────────────────────────────────────────────────────── -->
+          <tr>
+            <td class="card sm-px-20 sm-py-28" style="background-color:#FFFFFF;border:1px solid #E8DCD8;border-radius:20px;padding:32px;">
+
+              <!-- Greeting + confirmation -->
+              <p class="heading" style="margin:0;font-family:'Fraunces',Georgia,'Times New Roman',serif;font-size:24px;line-height:32px;font-weight:600;letter-spacing:-0.02em;color:#1A1416;">
+                Hi {{{FIRST_NAME|there}}},
+              </p>
+              <p class="body-text" style="margin:12px 0 0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:16px;line-height:26px;color:#4C4849;">
+                Thanks — I'll reply to your email within a couple of days.
+              </p>
+              <p class="body-text" style="margin:12px 0 0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:16px;line-height:26px;color:#4C4849;">
+                Here is what came through, so you know I have it right. If anything below is
+                wrong, reply to this email and I'll fix it before I start.
+              </p>
+
+              <!-- Gold accent rule -->
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:28px 0 0;">
+                <tr>
+                  <td width="48" style="width:48px;height:2px;background-color:#C8A06A;font-size:0;line-height:2px;">&nbsp;</td>
+                </tr>
+              </table>
+
+              <p class="label" style="margin:20px 0 16px;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:12px;line-height:16px;letter-spacing:1.4px;text-transform:uppercase;font-weight:600;color:#6F6664;">
+                What you sent
+              </p>
+
+              <!-- ── Summary rows ────────────────────────────────────────────
+                   Same visual spec as the Row component in
+                   emails/commission-request.tsx: uppercase meta label over the
+                   value. Raw HTML cannot return null for an empty optional
+                   field the way that component does, so every optional row
+                   carries a fallback in its variable. -->
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr>
+                  <td style="padding:0 0 16px;">
+                    <p class="label" style="margin:0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:12px;line-height:16px;letter-spacing:1.4px;text-transform:uppercase;color:#6F6664;">Portrait type</p>
+                    <p class="value" style="margin:3px 0 0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:15px;line-height:24px;color:#1A1416;">{{{PORTRAIT_TYPE|—}}}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:0 0 16px;">
+                    <p class="label" style="margin:0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:12px;line-height:16px;letter-spacing:1.4px;text-transform:uppercase;color:#6F6664;">Number of people</p>
+                    <p class="value" style="margin:3px 0 0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:15px;line-height:24px;color:#1A1416;">{{{PEOPLE|—}}}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:0 0 16px;">
+                    <p class="label" style="margin:0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:12px;line-height:16px;letter-spacing:1.4px;text-transform:uppercase;color:#6F6664;">Preferred medium</p>
+                    <p class="value" style="margin:3px 0 0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:15px;line-height:24px;color:#1A1416;">{{{MEDIUM|No preference}}}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:0 0 16px;">
+                    <p class="label" style="margin:0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:12px;line-height:16px;letter-spacing:1.4px;text-transform:uppercase;color:#6F6664;">Deadline</p>
+                    <p class="value" style="margin:3px 0 0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:15px;line-height:24px;color:#1A1416;">{{{DEADLINE|Not set}}}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:0 0 16px;">
+                    <p class="label" style="margin:0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:12px;line-height:16px;letter-spacing:1.4px;text-transform:uppercase;color:#6F6664;">Budget</p>
+                    <p class="value" style="margin:3px 0 0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:15px;line-height:24px;color:#1A1416;">{{{BUDGET|Not set}}}</p>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Hairline -->
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:8px 0 24px;">
+                <tr><td class="hair" style="height:1px;background-color:#E8DCD8;font-size:0;line-height:1px;">&nbsp;</td></tr>
+              </table>
+
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr>
+                  <td style="padding:0 0 16px;">
+                    <p class="label" style="margin:0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:12px;line-height:16px;letter-spacing:1.4px;text-transform:uppercase;color:#6F6664;">What would you like drawn?</p>
+                    <p class="value" style="margin:3px 0 0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:15px;line-height:24px;color:#1A1416;white-space:pre-wrap;">{{{DESCRIPTION|—}}}</p>
+                  </td>
+                </tr>
+
+                <!-- Reference photo link.
+                     REFERENCE_URL is optional on the form. Delete this <tr>
+                     entirely when there is no link — an href fallback of "—"
+                     would render a broken link. -->
+                <tr>
+                  <td style="padding:0 0 4px;">
+                    <p class="label" style="margin:0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:12px;line-height:16px;letter-spacing:1.4px;text-transform:uppercase;color:#6F6664;">Reference photo link</p>
+                    <p style="margin:3px 0 0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:15px;line-height:24px;">
+                      <a class="link" href="{{{REFERENCE_URL}}}" style="color:#7A2E43;text-decoration:underline;word-break:break-all;">{{{REFERENCE_URL}}}</a>
+                    </p>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Hairline -->
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:20px 0 24px;">
+                <tr><td class="hair" style="height:1px;background-color:#E8DCD8;font-size:0;line-height:1px;">&nbsp;</td></tr>
+              </table>
+
+              <!-- Price note -->
+              <p class="meta" style="margin:0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:14px;line-height:22px;color:#6F6664;">
+                Prices in CAD. Final quote depends on medium, size and detail.
+              </p>
+
+              <!-- ── CTA ─────────────────────────────────────────────────────
+                   Same recipe as the form's submit button: ink fill, cream
+                   text, pill, uppercase with 0.12em tracking, ≥44px tall.
+                   VML fallback because Outlook renders neither padding nor
+                   border-radius on an anchor. -->
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:28px 0 0;">
+                <tr>
+                  <td>
+                    <!--[if mso]>
+                    <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="https://www.instagram.com/tazxtehz" style="height:48px;v-text-anchor:middle;width:264px;" arcsize="50%" stroke="f" fillcolor="#1A1416">
+                      <w:anchorlock/>
+                      <center style="color:#FBF7F4;font-family:Helvetica,Arial,sans-serif;font-size:13px;font-weight:600;letter-spacing:1.5px;">MESSAGE ME TO ORDER</center>
+                    </v:roundrect>
+                    <![endif]-->
+                    <!--[if !mso]><!-- -->
+                    <a class="btn sm-block sm-text-center" href="https://www.instagram.com/tazxtehz" style="display:inline-block;background-color:#1A1416;color:#FBF7F4;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:13px;line-height:20px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;padding:14px 32px;border-radius:999px;">
+                      Message me to order
+                    </a>
+                    <!--<![endif]-->
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Signature -->
+              <p class="sig" style="margin:28px 0 0;font-family:'Caveat','Segoe Script',cursive;font-size:24px;line-height:30px;color:#7A2E43;">
+                — Taz
+              </p>
+
+            </td>
+          </tr>
+
+          <tr><td style="height:20px;font-size:0;line-height:20px;">&nbsp;</td></tr>
+
+          <!-- ── Footer ───────────────────────────────────────────────────── -->
+          <tr>
+            <td class="sm-px-20" style="padding:0 24px;">
+              <p style="margin:0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:14px;line-height:24px;">
+                <a class="link" href="https://www.instagram.com/tazxtehz" style="display:inline-block;padding:10px 12px 10px 0;color:#7A2E43;text-decoration:underline;">Instagram @tazxtehz</a>
+                <span class="meta" style="color:#6F6664;">&nbsp;·&nbsp;</span>
+                <a class="link" href="mailto:tazmeenzabiyaan8@gmail.com" style="display:inline-block;padding:10px 0 10px 12px;color:#7A2E43;text-decoration:underline;">tazmeenzabiyaan8@gmail.com</a>
+              </p>
+              <p class="meta" style="margin:8px 0 0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:13px;line-height:20px;color:#6F6664;">
+                All artwork &copy; Tazmeen Zabiyaan
+              </p>
+              <p class="meta" style="margin:12px 0 0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:13px;line-height:20px;color:#6F6664;">
+                You are getting this because you sent a commission request through
+                tazcreates.site.
+                <a class="link" href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="display:inline-block;padding:10px 0;color:#6F6664;text-decoration:underline;">Unsubscribe</a>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+
+        <!--[if mso]>
+        </td></tr></table>
+        <![endif]-->
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>

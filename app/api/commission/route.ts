@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { CommissionRequestEmail } from "@/emails/commission-request";
+import { CommissionConfirmationEmail } from "@/emails/commission-confirmation";
 import { commissionSchema } from "@/lib/commission-schema";
+import { SITE } from "@/content/site";
 
 /**
  * Commission request endpoint.
@@ -16,6 +18,7 @@ import { commissionSchema } from "@/lib/commission-schema";
  *   3. rate limit  — per IP, before spending a Turnstile call
  *   4. Turnstile   — verified server-side against Cloudflare, never trusted from the client
  *   5. send        — `to` is always the configured address, never taken from the payload
+ *   6. confirm     — a copy back to the visitor, best-effort and never fatal
  */
 
 export const runtime = "nodejs";
@@ -135,6 +138,35 @@ export async function POST(request: Request) {
       console.error("[commission] resend error", error);
       return NextResponse.json({ error: "send_failed" }, { status: 502 });
     }
+
+    /**
+     * The visitor's own confirmation.
+     *
+     * This is the one send whose recipient DOES come from the payload, which is the
+     * whole reason it sits last and behind every check above: Turnstile and the
+     * per-IP rate limit are what stop it being a way to mail arbitrary strangers
+     * from this domain. It stays a reply to a form the recipient just submitted —
+     * nothing about it is a general-purpose send.
+     *
+     * Best-effort by design. The artist's notification is the one that matters; if
+     * this fails the request still succeeded, so it is logged and swallowed rather
+     * than turned into a 502 that would make the visitor submit the form twice.
+     */
+    try {
+      const confirmation = await resend.emails.send({
+        from: `${SITE.artist.name} <${from}>`,
+        to: [data.email],
+        replyTo: to,
+        subject: SITE.email.client.subject,
+        react: CommissionConfirmationEmail({ data })
+      });
+      if (confirmation.error) {
+        console.error("[commission] confirmation not sent", confirmation.error);
+      }
+    } catch (err) {
+      console.error("[commission] confirmation not sent", err);
+    }
+
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("[commission] unexpected error", err);

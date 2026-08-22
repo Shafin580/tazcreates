@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<!--
+  ============================================================================
+  Tazcreates — new commission request (the email the ARTIST receives)
+  ============================================================================
+
+  Standalone-HTML twin of emails/commission-request.tsx, for uploading to
+  Resend by hand. Its counterpart in this folder is
+  commission-confirmation.html, the auto-reply the CLIENT receives.
+
+  Same palette and type as the confirmation so the two read as one system, but
+  laid out for scanning rather than reassuring: the sender's name and email are
+  the headline, the reply button is above the fold, and every field is present
+  whether or not the visitor filled it in.
+
+  ---------------------------------------------------------------------------
+  VARIABLES — Resend triple-brace syntax, {{{NAME|fallback}}}
+  ---------------------------------------------------------------------------
+  {{{NAME|—}}}                    sender's name, 2–80 chars
+  {{{EMAIL|—}}}                   sender's email — also the reply target
+  {{{PORTRAIT_TYPE|—}}}           "Solo — one person" / "Duo — two people" /
+                                  "Group — three or more"
+  {{{PEOPLE|—}}}                  integer, 1–20
+  {{{MEDIUM|No preference}}}      Acrylic / Oil pastel / Ink & marker / Anime
+  {{{DEADLINE|Not set}}}          free text, ≤60 chars
+  {{{BUDGET|Not set}}}            free text, ≤60 chars
+  {{{DESCRIPTION|—}}}             free text, ≤2000 chars
+  {{{REFERENCE_URL}}}             absolute URL — see the note on that block
+  {{{SUBMITTED_AT|—}}}            formatted timestamp, filled by the sender
+
+  This is a transactional send, so nothing here is filled in by Resend itself
+  — substitute before resend.emails.send(), or paste the file into Resend's
+  Templates editor, which understands the same syntax.
+
+  ---------------------------------------------------------------------------
+  SECURITY — read before wiring this up
+  ---------------------------------------------------------------------------
+  Every value in this email came from a public form that anyone can POST to
+  directly (app/api/commission/route.ts). Treat all of it as untrusted:
+
+    - Values go into text nodes, never concatenated into raw HTML. Whatever
+      substitutes them MUST HTML-escape first. React Email does this by
+      default, which is why emails/commission-request.tsx passes each field as
+      a child; a hand-rolled string replace does not, and is where an injected
+      value would land.
+    - EMAIL and REFERENCE_URL are the only values used inside an href.
+      lib/commission-schema.ts enforces .email() and .url() on them upstream,
+      so a value from the site's own form is safe. Do not point this template
+      at an unvalidated source.
+    - The recipient is never taken from the payload. This template does not
+      carry one; the route handler's CONTACT_TO_EMAIL does.
+
+  ---------------------------------------------------------------------------
+  COPY
+  ---------------------------------------------------------------------------
+  Field labels are SITE.email.* from content/site.ts — the artist-facing set,
+  written in the third person ("What they'd like drawn"). The confirmation
+  email uses SITE.commission.fields instead, because those address the client.
+  The reply hint is SITE.email.replyHint. Two strings are new: the preheader
+  and the "Reply to {{{NAME}}}" button label.
+
+  ---------------------------------------------------------------------------
+  THEME
+  ---------------------------------------------------------------------------
+  Identical to commission-confirmation.html — the app/globals.css oklch tokens
+  as hex: #FBF7F4 paper, #1A1416 ink, #C9647F rose, #7A2E43 wine, #E8DCD8
+  hairline, #C8A06A gold, #F4D9DC blush. Labels are #6F6664, not the #8A8180
+  in commission-request.tsx, which is 3.8:1 on white and fails AA. Dark mode
+  inverts within the same blush palette, deliberately not the site's .dark
+  scale.
+-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="x-apple-disable-message-reformatting">
+  <meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
+  <meta name="color-scheme" content="light dark">
+  <meta name="supported-color-schemes" content="light dark">
+  <title>New commission request — Tazcreates</title>
+
+  <!--[if mso]>
+  <noscript><xml><o:OfficeDocumentSettings>
+    <o:PixelsPerInch>96</o:PixelsPerInch>
+  </o:OfficeDocumentSettings></xml></noscript>
+  <![endif]-->
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Manrope:wght@400;500;600&display=swap">
+
+  <style>
+    :root { color-scheme: light dark; supported-color-schemes: light dark; }
+
+    body { margin: 0 !important; padding: 0 !important; width: 100% !important; }
+    table { border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+    td { mso-line-height-rule: exactly; }
+    img { border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; }
+    a { text-decoration: none; }
+
+    u + #body a,
+    #MessageViewBody a {
+      color: inherit;
+      text-decoration: none;
+      font-size: inherit;
+      font-family: inherit;
+      font-weight: inherit;
+      line-height: inherit;
+    }
+
+    @media (max-width: 600px) {
+      .sm-w-full { width: 100% !important; }
+      .sm-px-20 { padding-left: 20px !important; padding-right: 20px !important; }
+      .sm-py-28 { padding-top: 28px !important; padding-bottom: 28px !important; }
+      .sm-block { display: block !important; width: 100% !important; }
+      .sm-text-center { text-align: center !important; }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .page      { background-color: #14100F !important; }
+      .card      { background-color: #241D20 !important; border-color: #3A3134 !important; }
+      .fill      { background-color: #2E2528 !important; border-color: #3A3134 !important; }
+      .heading   { color: #FBF7F4 !important; }
+      .body-text { color: #DCD3D3 !important; }
+      .value     { color: #FBF7F4 !important; }
+      .label     { color: #B9AFAE !important; }
+      .meta      { color: #B9AFAE !important; }
+      .hair      { background-color: #3A3134 !important; }
+      .link      { color: #D98BA0 !important; }
+      .btn       { background-color: #FBF7F4 !important; color: #1A1416 !important; }
+    }
+  </style>
+</head>
+
+<body id="body" class="page" style="margin:0;padding:0;width:100%;background-color:#FBF7F4;font-family:'Manrope',Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;">
+
+  <!-- Preheader: what the inbox shows next to the subject. -->
+  <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#FBF7F4;opacity:0;">
+    {{{NAME|Someone}}} wants a {{{PORTRAIT_TYPE|portrait}}} — reply to this email to reach them.
+    &#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;
+  </div>
+
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" class="page" style="background-color:#FBF7F4;">
+    <tr>
+      <td align="center" style="padding:32px 12px;">
+
+        <!--[if mso]>
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600"><tr><td>
+        <![endif]-->
+
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" class="sm-w-full" style="width:600px;max-width:600px;">
+
+          <!-- ── Header band ───────────────────────────────────────────────
+               Wine fill with the static form of the .mesh-bloom washes in
+               app/globals.css. The sender, not the artist, is the headline
+               here — this is a work item, not a greeting. -->
+          <tr>
+            <td class="sm-px-20 sm-py-28" style="background-color:#7A2E43;background-image:radial-gradient(at 18% 22%, #B95E80 0px, transparent 55%),radial-gradient(at 82% 18%, #C36A5E 0px, transparent 52%),radial-gradient(at 72% 82%, #D8A97A 0px, transparent 50%),radial-gradient(at 25% 88%, #8E3A5C 0px, transparent 55%);border-radius:20px;padding:36px 32px;">
+              <p style="margin:0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:12px;line-height:16px;letter-spacing:2px;text-transform:uppercase;color:#F4D9DC;">
+                New commission request
+              </p>
+              <p style="margin:8px 0 0;font-family:'Fraunces',Georgia,'Times New Roman',serif;font-size:30px;line-height:38px;font-weight:600;letter-spacing:-0.02em;color:#FBF7F4;">
+                {{{NAME|—}}}
+              </p>
+              <p style="margin:4px 0 0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:15px;line-height:24px;">
+                <a href="mailto:{{{EMAIL}}}" style="color:#F4D9DC;text-decoration:underline;word-break:break-all;">{{{EMAIL|—}}}</a>
+              </p>
+            </td>
+          </tr>
+
+          <tr><td style="height:16px;font-size:0;line-height:16px;">&nbsp;</td></tr>
+
+          <!-- ── Card ─────────────────────────────────────────────────────── -->
+          <tr>
+            <td class="card sm-px-20 sm-py-28" style="background-color:#FFFFFF;border:1px solid #E8DCD8;border-radius:20px;padding:32px;">
+
+              <!-- Reply CTA first: the only action this email asks for.
+                   VML fallback because Outlook renders neither padding nor
+                   border-radius on an anchor. -->
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr>
+                  <td>
+                    <!--[if mso]>
+                    <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="mailto:{{{EMAIL}}}" style="height:48px;v-text-anchor:middle;width:220px;" arcsize="50%" stroke="f" fillcolor="#1A1416">
+                      <w:anchorlock/>
+                      <center style="color:#FBF7F4;font-family:Helvetica,Arial,sans-serif;font-size:13px;font-weight:600;letter-spacing:1.5px;">REPLY TO {{{NAME}}}</center>
+                    </v:roundrect>
+                    <![endif]-->
+                    <!--[if !mso]><!-- -->
+                    <a class="btn sm-block sm-text-center" href="mailto:{{{EMAIL}}}" style="display:inline-block;background-color:#1A1416;color:#FBF7F4;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:13px;line-height:20px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;padding:14px 32px;border-radius:999px;">
+                      Reply to {{{NAME|them}}}
+                    </a>
+                    <!--<![endif]-->
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Gold accent rule -->
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:28px 0 0;">
+                <tr>
+                  <td width="48" style="width:48px;height:2px;background-color:#C8A06A;font-size:0;line-height:2px;">&nbsp;</td>
+                </tr>
+              </table>
+
+              <!-- ── The brief ───────────────────────────────────────────────
+                   Same visual spec as the Row component in
+                   emails/commission-request.tsx: uppercase meta label over the
+                   value. Raw HTML cannot return null for an empty optional
+                   field the way that component does, so every optional row
+                   carries a fallback in its variable — an empty row here is
+                   information too, so none of them are dropped. -->
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-top:24px;">
+                <tr>
+                  <td style="padding:0 0 16px;">
+                    <p class="label" style="margin:0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:12px;line-height:16px;letter-spacing:1.4px;text-transform:uppercase;color:#6F6664;">Portrait type</p>
+                    <p class="value" style="margin:3px 0 0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:15px;line-height:24px;color:#1A1416;">{{{PORTRAIT_TYPE|—}}}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:0 0 16px;">
+                    <p class="label" style="margin:0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:12px;line-height:16px;letter-spacing:1.4px;text-transform:uppercase;color:#6F6664;">People in the frame</p>
+                    <p class="value" style="margin:3px 0 0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:15px;line-height:24px;color:#1A1416;">{{{PEOPLE|—}}}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:0 0 16px;">
+                    <p class="label" style="margin:0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:12px;line-height:16px;letter-spacing:1.4px;text-transform:uppercase;color:#6F6664;">Preferred medium</p>
+                    <p class="value" style="margin:3px 0 0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:15px;line-height:24px;color:#1A1416;">{{{MEDIUM|No preference}}}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:0 0 16px;">
+                    <p class="label" style="margin:0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:12px;line-height:16px;letter-spacing:1.4px;text-transform:uppercase;color:#6F6664;">Deadline</p>
+                    <p class="value" style="margin:3px 0 0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:15px;line-height:24px;color:#1A1416;">{{{DEADLINE|Not set}}}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:0 0 16px;">
+                    <p class="label" style="margin:0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:12px;line-height:16px;letter-spacing:1.4px;text-transform:uppercase;color:#6F6664;">Budget</p>
+                    <p class="value" style="margin:3px 0 0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:15px;line-height:24px;color:#1A1416;">{{{BUDGET|Not set}}}</p>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Hairline -->
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:8px 0 24px;">
+                <tr><td class="hair" style="height:1px;background-color:#E8DCD8;font-size:0;line-height:1px;">&nbsp;</td></tr>
+              </table>
+
+              <!-- The description gets the blush fill, because it is the part
+                   that actually has to be read rather than scanned. -->
+              <p class="label" style="margin:0 0 8px;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:12px;line-height:16px;letter-spacing:1.4px;text-transform:uppercase;color:#6F6664;">
+                What they'd like drawn
+              </p>
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr>
+                  <td class="fill" style="background-color:#FDF3F4;border:1px solid #F4D9DC;border-radius:14px;padding:16px 18px;">
+                    <p class="value" style="margin:0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:15px;line-height:26px;color:#1A1416;white-space:pre-wrap;">{{{DESCRIPTION|—}}}</p>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Reference link.
+                   REFERENCE_URL is optional on the form. Delete this whole
+                   block when there is no link — an href fallback of "—" would
+                   render a broken link. -->
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-top:20px;">
+                <tr>
+                  <td>
+                    <p class="label" style="margin:0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:12px;line-height:16px;letter-spacing:1.4px;text-transform:uppercase;color:#6F6664;">Reference</p>
+                    <p style="margin:3px 0 0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:15px;line-height:24px;">
+                      <a class="link" href="{{{REFERENCE_URL}}}" style="color:#7A2E43;text-decoration:underline;word-break:break-all;">{{{REFERENCE_URL}}}</a>
+                    </p>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Hairline -->
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:24px 0;">
+                <tr><td class="hair" style="height:1px;background-color:#E8DCD8;font-size:0;line-height:1px;">&nbsp;</td></tr>
+              </table>
+
+              <p class="meta" style="margin:0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:14px;line-height:22px;color:#6F6664;">
+                Reply directly to this email to reach {{{NAME|them}}}.
+              </p>
+
+            </td>
+          </tr>
+
+          <tr><td style="height:20px;font-size:0;line-height:20px;">&nbsp;</td></tr>
+
+          <!-- ── Footer ───────────────────────────────────────────────────
+               No unsubscribe link: this is a transactional notification the
+               artist sends to herself, not a marketing send to an audience. -->
+          <tr>
+            <td class="sm-px-20" style="padding:0 24px;">
+              <p class="meta" style="margin:0;font-family:'Manrope',Helvetica,Arial,sans-serif;font-size:13px;line-height:20px;color:#6F6664;">
+                Sent by the commission form on
+                <a class="link" href="https://tazcreates.site" style="color:#7A2E43;text-decoration:underline;">tazcreates.site</a>
+                &nbsp;·&nbsp; {{{SUBMITTED_AT|—}}}
+              </p>
+            </td>
+          </tr>
+
+        </table>
+
+        <!--[if mso]>
+        </td></tr></table>
+        <![endif]-->
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>

@@ -26,7 +26,7 @@ discussion, not a drive-by `pnpm add`.
 - Use plan mode for any task with 3+ steps; write the spec to `.claude/tasks/plans/<slug>.md` before implementing.
 - Read the relevant skill (via the Skill tool) BEFORE writing or reviewing code it covers.
 - After any user correction, append the lesson to `.claude/tasks/lessons.md`.
-- Never mark work done without proof. Verification for this project: `pnpm tsc --noEmit` + `pnpm lint` on changed files + `pnpm test`.
+- Never mark work done without proof. Verification for this project: `pnpm tsc --noEmit` + `pnpm lint` on changed files. **Do not run `pnpm test` as a routine step** — run it only when the change touches something under test (`components/portfolio/`, `lib/commission-schema.ts`) or when asked. Jest does not exit on its own here (open-handle leak), so it needs `--forceExit` and otherwise leaves stray processes behind.
 - Before starting a bounded/mechanical subtask (stub, test skeleton, rename, docstring pass, summary, commit-message draft), read the `local-llm` skill — it decides whether to offload to the local model. **Always review** the result; see *Delegating to the local model* below for the mechanics.
 
 ## Deployment (Cloudflare Workers)

@@ -1,38 +1,39 @@
 import { ImageResponse } from "next/og";
-import { readFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { SITE } from "@/content/site";
 
-export const alt = `${SITE.artist.name} — ${SITE.artist.role}`;
-export const size = { width: 1200, height: 630 };
-export const contentType = "image/png";
-
 /**
- * Pinned static because the body below reads fonts and artwork off disk with `node:fs`.
- * On Cloudflare Workers there is no filesystem at request time, so this route has to be
- * baked at build time or it fails in production.
+ * Build-time generator for the social card, written to `public/og.png`.
+ *
+ * This used to be `app/opengraph-image.tsx`, a Next metadata route (with `twitter-image`
+ * re-exporting it). It rendered the same image, but keeping it a route meant `next/og`
+ * stayed in the Worker's module graph, so every deploy shipped Satori's `resvg.wasm`,
+ * `yoga.wasm`, a font blob and their JS glue — 820 KB gzipped of a 3 MB Workers script
+ * budget — to render a picture that is identical on every request.
+ *
+ * Emitting it to `public/` at build time makes it a static asset, which Cloudflare serves
+ * off the assets store and does not count against the script limit, and takes `next/og`
+ * out of the runtime entirely. Same 1200x630 PNG, same pixels.
+ *
+ * Run by `pnpm og`, and wired into `build` and `build:cf` so the card cannot drift out of
+ * sync with `content/site.ts`. The committed `public/og.png` keeps `next dev` honest.
+ *
+ * Fonts and artwork are read off disk rather than fetched: this is a build step, and a
+ * network fetch here would fail the build on an offline machine.
  */
-export const dynamic = "force-static";
 
-/**
- * The social card, generated rather than hand-exported.
- *
- * What this replaces: `SITE_CONFIG.ogImage` used to point at a gallery piece — a
- * 600x800 *portrait* crop. Social platforms lay out a 1.91:1 landscape card, so a
- * portrait image gets letterboxed or centre-cropped through the face. Generating it
- * here keeps the card in the site's own palette and type, and it cannot drift out of
- * sync with `content/site.ts`.
- *
- * Fonts are read off disk rather than fetched: this runs at build time in a Node
- * runtime, and a network fetch here fails the build on an offline machine.
- */
-export default async function OpengraphImage() {
+const size = { width: 1200, height: 630 };
+
+const OUT = join(process.cwd(), "public", "og.png");
+
+async function render(): Promise<Buffer> {
   const portrait = await readFile(
     join(process.cwd(), "public", SITE.gallery.items[2].src.replace(/^\//, ""))
   );
   const portraitSrc = `data:image/jpeg;base64,${portrait.toString("base64")}`;
 
-  return new ImageResponse(
+  const image = new ImageResponse(
     <div
       style={{
         width: "100%",
@@ -99,4 +100,14 @@ export default async function OpengraphImage() {
     </div>,
     size
   );
+
+  return Buffer.from(await image.arrayBuffer());
 }
+
+async function main() {
+  const png = await render();
+  await writeFile(OUT, png);
+  console.log(`og: wrote public/og.png (${size.width}x${size.height}, ${(png.length / 1024).toFixed(0)} KB)`);
+}
+
+void main();

@@ -13,13 +13,14 @@ import type { SiteConfig } from "@/lib/seo/types";
  * so preview deployments emit their own canonical host.
  */
 /**
- * The social card is generated at `app/opengraph-image.tsx` (1200x630) rather than
+ * The social card is generated (1200x630) rather than
  * reusing a gallery piece — those are 600x800 portraits, and social platforms lay out
  * a 1.91:1 landscape card, so a portrait crop gets letterboxed or cropped through the
- * face. Next serves the generated route at `/opengraph-image`.
+ * face. `scripts/generate-og.tsx` renders it at build time to `public/og.png`, so the
+ * PNG ships as a static asset instead of inside the Worker bundle.
  */
 const OG_IMAGE = {
-  path: "/opengraph-image",
+  path: "/og.png",
   width: 1200,
   height: 630,
   alt: `${SITE.artist.name} — ${SITE.artist.role}. ${SITE.artist.tagline}.`

@@ -27,13 +27,11 @@
   // tier — set `images: { unoptimized: true }` in next.config.ts to opt out entirely.
   "images": {
     "binding": "IMAGES"
-  },
+  }
 
-  // Must match "name" above. OpenNext uses it for cache revalidation callbacks.
-  "services": [
-    {
-      "binding": "WORKER_SELF_REFERENCE",
-      "service": "tazcreates"
-    }
-  ]
+  // No WORKER_SELF_REFERENCE binding on purpose. OpenNext only needs it to call back
+  // into itself for ISR revalidation, and nothing here revalidates — every route is
+  // statically generated. Leaving it out also avoids a Worker that binds to itself
+  // before it exists on the very first deploy. Add it back (with "service" matching
+  // "name" above) in the same change that introduces a revalidating route.
 }
